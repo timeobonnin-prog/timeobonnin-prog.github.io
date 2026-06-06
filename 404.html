@@ -24,7 +24,7 @@
             text-align: center;
         }
 
-        /* Arrière-plan Forêt */
+        /* --- 1. ARRIÈRE-PLAN (60% visible au centre) --- */
         .bg-forest {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -32,19 +32,15 @@
                         url('https://images.unsplash.com/photo-1448375240586-882707db888b?q=80&w=1920&auto=format&fit=crop') no-repeat center center;
             background-size: cover;
             filter: saturate(0.6) contrast(1.1);
-            z-index: 1;
+            z-index: 0;
         }
 
-        /* Brume de forêt animée en bas */
         .forest-mist {
             position: absolute;
-            bottom: -50px;
-            left: 0;
-            width: 100%;
-            height: 300px;
+            bottom: -50px; left: 0; width: 100%; height: 300px;
             background: linear-gradient(to top, rgba(52, 211, 153, 0.15), transparent);
             filter: blur(20px);
-            z-index: 2;
+            z-index: 1;
             animation: mistDrift 10s infinite alternate ease-in-out;
             pointer-events: none;
         }
@@ -54,11 +50,65 @@
             100% { transform: translateY(-20px) scaleX(1.1); opacity: 0.8; }
         }
 
-        /* Les Lucioles magiques */
+        /* --- 2. NOUVEAU : BRANCHES ET FEUILLES (40% de l'écran sur les bords) --- */
+        .branches-container {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 2;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .corner-branch {
+            position: absolute;
+        }
+        /* Positionnement des 4 coins */
+        .cb-tl { top: -2%; left: -2%; }
+        .cb-tr { top: -2%; right: -2%; transform: scaleX(-1); }
+        .cb-bl { bottom: -2%; left: -2%; transform: scaleY(-1); }
+        .cb-br { bottom: -2%; right: -2%; transform: scale(-1, -1); }
+
+        /* Animation des branches (bois) */
+        .branch-core {
+            position: absolute;
+            transform-origin: 0 50%;
+            background: linear-gradient(to right, #2d1b15, #4a3022);
+            border-radius: 15px;
+            transform: scaleX(0) var(--rot);
+            animation: growBranch 2.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards 0.2s;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+        }
+        .branch-core.sub {
+            animation: growBranch 2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards 1.2s;
+        }
+
+        @keyframes growBranch {
+            0% { transform: scaleX(0) var(--rot); }
+            100% { transform: scaleX(1) var(--rot); }
+        }
+
+        /* Animation des feuilles */
+        .leaf-core {
+            position: absolute;
+            width: 35px; height: 18px;
+            background: linear-gradient(135deg, #4ade80, #166534);
+            border-radius: 0 100% 0 100%;
+            transform-origin: center;
+            transform: scale(0) var(--l-rot);
+            animation: popLeaf 1s cubic-bezier(0.34, 1.56, 0.64, 1) forwards 2.5s;
+            box-shadow: 0 0 10px rgba(52, 211, 153, 0.3);
+        }
+
+        @keyframes popLeaf {
+            0% { transform: scale(0) var(--l-rot); }
+            100% { transform: scale(1) var(--l-rot); }
+        }
+
+        /* --- 3. LUCIOLES --- */
         .fireflies {
             position: absolute;
             width: 100%; height: 100%;
-            z-index: 2;
+            z-index: 3;
             pointer-events: none;
         }
 
@@ -99,15 +149,15 @@
             100% { transform: translate(-100px, 150px); opacity: 0; }
         }
 
-        /* Carte Interface Nature */
+        /* --- 4. CARTE & CHOUETTE --- */
         .card {
             position: relative;
-            z-index: 3;
+            z-index: 4;
             background: rgba(4, 8, 7, 0.65);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border: 1px solid rgba(52, 211, 153, 0.1);
-            border-top: 5px solid #4a3022; /* Fait office de branche pour la chouette */
+            border-top: 5px solid #4a3022;
             padding: 50px 40px;
             border-radius: 20px;
             width: 90%;
@@ -115,18 +165,15 @@
             box-shadow: 0 30px 60px rgba(0, 0, 0, 0.7);
         }
 
-        /* --- NOUVEAU : La chouette qui dort --- */
         .owl-container {
             position: absolute;
-            top: -42px;
-            left: 50%;
+            top: -42px; left: 50%;
             transform: translateX(-50%);
-            font-size: 35px; /* Taille de la chouette */
+            font-size: 35px;
             z-index: 10;
             display: flex;
         }
 
-        /* Animation de respiration pour la chouette */
         .owl {
             animation: owlBreathe 4s infinite ease-in-out;
             filter: drop-shadow(0 5px 5px rgba(0,0,0,0.5));
@@ -137,7 +184,6 @@
             50% { transform: scaleY(0.95) translateY(2px); }
         }
 
-        /* Les Zzz de la chouette */
         .zzz {
             position: absolute;
             color: #bef264;
@@ -158,7 +204,6 @@
             100% { transform: translate(30px, -50px) scale(1.5) rotate(20deg); opacity: 0; }
         }
 
-        /* --- NOUVEAU : Lianes qui pendent --- */
         .vines {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -168,8 +213,7 @@
         }
         .vine {
             position: absolute;
-            top: 0;
-            width: 3px;
+            top: 0; width: 3px;
             background: linear-gradient(to bottom, #166534, #22c55e);
             border-radius: 0 0 5px 5px;
             box-shadow: 0 0 5px rgba(34, 197, 94, 0.5);
@@ -180,47 +224,23 @@
         .v4 { right: 30%; height: 30px; }
 
         h1 {
-            font-size: 1.35rem;
-            font-weight: 300;
-            letter-spacing: 4px;
-            margin-bottom: 20px;
-            margin-top: 10px;
-            text-transform: uppercase;
-            color: #ecfdf5;
+            font-size: 1.35rem; font-weight: 300; letter-spacing: 4px;
+            margin-bottom: 20px; margin-top: 10px; text-transform: uppercase; color: #ecfdf5;
         }
 
         p {
-            font-weight: 300;
-            font-size: 0.95rem;
-            color: #94a3b8;
-            line-height: 1.7;
-            margin-bottom: 20px;
+            font-weight: 300; font-size: 0.95rem; color: #94a3b8;
+            line-height: 1.7; margin-bottom: 20px;
         }
 
-        /* Séquence Terre, Plante et Bouton */
+        /* --- 5. ANIMATION TERRE, PLANTE ET BOUTON --- */
         .sequence-container {
-            position: relative;
-            height: 120px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-end;
-            margin-top: 30px;
+            position: relative; height: 120px; display: flex; flex-direction: column;
+            align-items: center; justify-content: flex-end; margin-top: 30px;
         }
 
-        /* La terre qui tombe (0 à 2 secondes) */
-        .dirt-particles {
-            position: absolute;
-            top: -40px;
-            display: flex;
-            gap: 10px;
-        }
-        .dirt-drop {
-            width: 6px; height: 6px;
-            background: #5c4033;
-            border-radius: 50%;
-            opacity: 0;
-        }
+        .dirt-particles { position: absolute; top: -40px; display: flex; gap: 10px; }
+        .dirt-drop { width: 6px; height: 6px; background: #5c4033; border-radius: 50%; opacity: 0; }
         .d1 { animation: fallDirt 1s ease-in forwards 0.2s; }
         .d2 { animation: fallDirt 1s ease-in forwards 0.6s; width: 8px; height: 8px; }
         .d3 { animation: fallDirt 1s ease-in forwards 1s; }
@@ -232,63 +252,31 @@
             100% { transform: translateY(100px); opacity: 0; }
         }
 
-        /* Le monticule de terre */
         .dirt-mound {
-            position: absolute;
-            bottom: 0;
-            width: 50px;
-            height: 15px;
-            background: #4a3022;
-            border-radius: 50px 50px 0 0;
-            opacity: 0;
-            transform: scaleY(0);
-            transform-origin: bottom;
+            position: absolute; bottom: 0; width: 50px; height: 15px;
+            background: #4a3022; border-radius: 50px 50px 0 0; opacity: 0;
+            transform: scaleY(0); transform-origin: bottom;
             animation: formMound 1s ease-out forwards 1.5s;
         }
 
-        @keyframes formMound {
-            to { opacity: 1; transform: scaleY(1); }
-        }
+        @keyframes formMound { to { opacity: 1; transform: scaleY(1); } }
 
-        /* La plante qui germe (à 4 secondes) */
         .plant-sprout {
-            position: absolute;
-            bottom: 10px;
-            width: 4px;
-            height: 40px;
-            background: #34d399;
-            border-radius: 10px;
-            transform: scaleY(0);
-            transform-origin: bottom;
-            box-shadow: 0 0 15px #34d399;
+            position: absolute; bottom: 10px; width: 4px; height: 40px;
+            background: #34d399; border-radius: 10px; transform: scaleY(0);
+            transform-origin: bottom; box-shadow: 0 0 15px #34d399;
             animation: growPlant 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards 4s;
             z-index: 2;
         }
 
-        @keyframes growPlant {
-            to { transform: scaleY(1); }
-        }
+        @keyframes growPlant { to { transform: scaleY(1); } }
 
-        /* Le bouton illuminé */
         .btn-magic {
-            display: inline-block;
-            position: relative;
-            z-index: 3;
-            padding: 14px 38px;
-            background: #020504;
-            color: #34d399;
-            text-decoration: none;
-            border-radius: 30px;
-            font-weight: 500;
-            font-size: 0.85rem;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            border: 1px solid #34d399;
-            margin-bottom: 25px;
-            
-            opacity: 0;
-            transform: translateY(10px);
-            
+            display: inline-block; position: relative; z-index: 3;
+            padding: 14px 38px; background: #020504; color: #34d399; text-decoration: none;
+            border-radius: 30px; font-weight: 500; font-size: 0.85rem; letter-spacing: 2px;
+            text-transform: uppercase; border: 1px solid #34d399; margin-bottom: 25px;
+            opacity: 0; transform: translateY(10px);
             animation: revealGlowButton 1.5s ease-out forwards 4.5s;
             transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
@@ -299,18 +287,104 @@
             100% { opacity: 1; transform: translateY(0); box-shadow: 0 0 20px rgba(52, 211, 153, 0.4); }
         }
 
-        .btn-magic:hover {
-            background: #34d399;
-            color: #020504;
-            box-shadow: 0 0 35px rgba(52, 211, 153, 0.7);
-        }
+        .btn-magic:hover { background: #34d399; color: #020504; box-shadow: 0 0 35px rgba(52, 211, 153, 0.7); }
     </style>
 </head>
 <body>
 
+    <!-- Fond et brume -->
     <div class="bg-forest"></div>
     <div class="forest-mist"></div>
+
+    <!-- Le cadre de branches qui pousse aux 4 coins (40% de couverture) -->
+    <div class="branches-container">
+        
+        <!-- Haut Gauche -->
+        <div class="corner-branch cb-tl">
+            <div class="branch-core" style="--rot: rotate(35deg); width: 45vw; height: 24px;">
+                <div class="branch-core sub" style="--rot: rotate(-40deg); width: 20vw; height: 14px; top: 2px; left: 15%;">
+                    <div class="leaf-core" style="--l-rot: rotate(-40deg); top: -20px; left: 30%;"></div>
+                    <div class="leaf-core" style="--l-rot: rotate(30deg); top: 10px; left: 60%;"></div>
+                </div>
+                <div class="branch-core sub" style="--rot: rotate(50deg); width: 25vw; height: 16px; top: 5px; left: 35%;">
+                    <div class="leaf-core" style="--l-rot: rotate(45deg); top: 15px; left: 25%;"></div>
+                    <div class="leaf-core" style="--l-rot: rotate(-30deg); top: -15px; left: 55%;"></div>
+                </div>
+                <div class="branch-core sub" style="--rot: rotate(-20deg); width: 15vw; height: 10px; top: 4px; left: 70%;">
+                    <div class="leaf-core" style="--l-rot: rotate(25deg); top: 8px; left: 80%;"></div>
+                </div>
+                <div class="leaf-core" style="--l-rot: rotate(-30deg); top: -20px; left: 10%;"></div>
+                <div class="leaf-core" style="--l-rot: rotate(60deg); top: 18px; left: 25%;"></div>
+                <div class="leaf-core" style="--l-rot: rotate(-25deg); top: -20px; left: 50%;"></div>
+                <div class="leaf-core" style="--l-rot: rotate(45deg); top: 18px; left: 65%;"></div>
+            </div>
+        </div>
+
+        <!-- Haut Droite -->
+        <div class="corner-branch cb-tr">
+            <div class="branch-core" style="--rot: rotate(35deg); width: 45vw; height: 24px;">
+                <div class="branch-core sub" style="--rot: rotate(-40deg); width: 20vw; height: 14px; top: 2px; left: 15%;">
+                    <div class="leaf-core" style="--l-rot: rotate(-40deg); top: -20px; left: 30%;"></div>
+                    <div class="leaf-core" style="--l-rot: rotate(30deg); top: 10px; left: 60%;"></div>
+                </div>
+                <div class="branch-core sub" style="--rot: rotate(50deg); width: 25vw; height: 16px; top: 5px; left: 35%;">
+                    <div class="leaf-core" style="--l-rot: rotate(45deg); top: 15px; left: 25%;"></div>
+                    <div class="leaf-core" style="--l-rot: rotate(-30deg); top: -15px; left: 55%;"></div>
+                </div>
+                <div class="branch-core sub" style="--rot: rotate(-20deg); width: 15vw; height: 10px; top: 4px; left: 70%;">
+                    <div class="leaf-core" style="--l-rot: rotate(25deg); top: 8px; left: 80%;"></div>
+                </div>
+                <div class="leaf-core" style="--l-rot: rotate(-30deg); top: -20px; left: 10%;"></div>
+                <div class="leaf-core" style="--l-rot: rotate(60deg); top: 18px; left: 25%;"></div>
+                <div class="leaf-core" style="--l-rot: rotate(-25deg); top: -20px; left: 50%;"></div>
+                <div class="leaf-core" style="--l-rot: rotate(45deg); top: 18px; left: 65%;"></div>
+            </div>
+        </div>
+
+        <!-- Bas Gauche -->
+        <div class="corner-branch cb-bl">
+            <div class="branch-core" style="--rot: rotate(35deg); width: 45vw; height: 24px;">
+                <div class="branch-core sub" style="--rot: rotate(-40deg); width: 20vw; height: 14px; top: 2px; left: 15%;">
+                    <div class="leaf-core" style="--l-rot: rotate(-40deg); top: -20px; left: 30%;"></div>
+                    <div class="leaf-core" style="--l-rot: rotate(30deg); top: 10px; left: 60%;"></div>
+                </div>
+                <div class="branch-core sub" style="--rot: rotate(50deg); width: 25vw; height: 16px; top: 5px; left: 35%;">
+                    <div class="leaf-core" style="--l-rot: rotate(45deg); top: 15px; left: 25%;"></div>
+                    <div class="leaf-core" style="--l-rot: rotate(-30deg); top: -15px; left: 55%;"></div>
+                </div>
+                <div class="branch-core sub" style="--rot: rotate(-20deg); width: 15vw; height: 10px; top: 4px; left: 70%;">
+                    <div class="leaf-core" style="--l-rot: rotate(25deg); top: 8px; left: 80%;"></div>
+                </div>
+                <div class="leaf-core" style="--l-rot: rotate(-30deg); top: -20px; left: 10%;"></div>
+                <div class="leaf-core" style="--l-rot: rotate(60deg); top: 18px; left: 25%;"></div>
+                <div class="leaf-core" style="--l-rot: rotate(-25deg); top: -20px; left: 50%;"></div>
+                <div class="leaf-core" style="--l-rot: rotate(45deg); top: 18px; left: 65%;"></div>
+            </div>
+        </div>
+
+        <!-- Bas Droite -->
+        <div class="corner-branch cb-br">
+            <div class="branch-core" style="--rot: rotate(35deg); width: 45vw; height: 24px;">
+                <div class="branch-core sub" style="--rot: rotate(-40deg); width: 20vw; height: 14px; top: 2px; left: 15%;">
+                    <div class="leaf-core" style="--l-rot: rotate(-40deg); top: -20px; left: 30%;"></div>
+                    <div class="leaf-core" style="--l-rot: rotate(30deg); top: 10px; left: 60%;"></div>
+                </div>
+                <div class="branch-core sub" style="--rot: rotate(50deg); width: 25vw; height: 16px; top: 5px; left: 35%;">
+                    <div class="leaf-core" style="--l-rot: rotate(45deg); top: 15px; left: 25%;"></div>
+                    <div class="leaf-core" style="--l-rot: rotate(-30deg); top: -15px; left: 55%;"></div>
+                </div>
+                <div class="branch-core sub" style="--rot: rotate(-20deg); width: 15vw; height: 10px; top: 4px; left: 70%;">
+                    <div class="leaf-core" style="--l-rot: rotate(25deg); top: 8px; left: 80%;"></div>
+                </div>
+                <div class="leaf-core" style="--l-rot: rotate(-30deg); top: -20px; left: 10%;"></div>
+                <div class="leaf-core" style="--l-rot: rotate(60deg); top: 18px; left: 25%;"></div>
+                <div class="leaf-core" style="--l-rot: rotate(-25deg); top: -20px; left: 50%;"></div>
+                <div class="leaf-core" style="--l-rot: rotate(45deg); top: 18px; left: 65%;"></div>
+            </div>
+        </div>
+    </div>
     
+    <!-- Les Lucioles -->
     <div class="fireflies">
         <div class="firefly f1"></div>
         <div class="firefly f2"></div>
@@ -319,6 +393,7 @@
         <div class="firefly f5"></div>
     </div>
 
+    <!-- Le cadre central -->
     <div class="card">
         
         <div class="vines">
@@ -342,14 +417,12 @@
             <a href="https://timeo-photographie-4.webnode.fr/" class="btn-magic">
                 Rejoindre le site
             </a>
-
             <div class="dirt-particles">
                 <div class="dirt-drop d1"></div>
                 <div class="dirt-drop d2"></div>
                 <div class="dirt-drop d3"></div>
                 <div class="dirt-drop d4"></div>
             </div>
-
             <div class="plant-sprout"></div>
             <div class="dirt-mound"></div>
         </div>
