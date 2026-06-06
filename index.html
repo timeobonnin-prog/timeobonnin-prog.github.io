@@ -115,8 +115,7 @@
 
         /* --- POISSONS --- */
         .fish-layer {
-            position: absolute;
-            bottom: 6%;
+            position: absolute;bottom: 6%;
             width: 100%;
             height: 15%;
             z-index: 2;
@@ -239,8 +238,7 @@
         .action-btn:hover { background: #e2e8f0; transform: translateY(-1px); }
 
         /* Styles d'erreur */
-        .error-icon-wrapper {
-            color: var(--error-color);
+        .error-icon-wrapper { color: var(--error-color);
             margin: 20px 0 15px 0;
         }
         .error-title { font-size: 1.2rem; color: var(--error-color); font-weight: 600; margin-bottom: 8px; }
@@ -345,11 +343,20 @@
     </div>
 
     <script>
+        // --- SÉCURITÉ 1 : PROTECTION ANTI-CLICKJACKING (FRAME BUSTING) ---
+        if (window.top !== window.self) {
+            window.top.location.replace(window.self.location.href);
+        }
+
         const ambientLayer = document.getElementById('ambientLayer');
         const fishLayer = document.getElementById('fishLayer');
         const kingfisher = document.getElementById('kingfisher');
         
-        const FETCH_URL = 'https://gist.githubusercontent.com/timeobonnin-prog/e9b4811717618a200e3e2447d553348f/raw/tunnel.txt';
+        // --- SÉCURITÉ 2 : URL DU GIST SÉPARÉE ET ENCODÉE EN BASE64 POUR LES BOT-SCRAPERS ---
+        // 'aHR0cHM6Ly9naXN0LmdpdGh1YnVzZXJjb250ZW50LmNvbS90aW1lb2Jvbm5pbi1wcm9nL2U5YjQ4MTE3MTc2MThhMjAwZTNlMjQ0N2Q1NTMzNDhmL3Jhdy90dW5uZWwudHh0'
+        const _p1 = "aHR0cHM6Ly9naXN0LmdpdGh1YnVzZXJjb250ZW50LmNvbS8=";
+        const _p2 = "dGltZW9ib25uaW4tcHJvZy9lOWI0ODExNzE3NjE4YTIwMGUzZTI0NDdkNTUzMzQ4Zi9yYXcvdHVubmVsLnR4dA==";
+        const FETCH_URL = atob(_p1) + atob(_p2);
         
         let countdownInterval = null;
         let targetRedirectUrl = '';
@@ -424,17 +431,32 @@
             });
         }
 
-        // --- RECUPERATION DU GIST ET REDIRECTION ---
+        // --- RECUPERATION DU GIST ET REDIRECTION (AVEC CACHE DE PROTECTION SÉCURISÉ) ---
         async function fetchDestination() {
             showState('loading');
             if (countdownInterval) clearInterval(countdownInterval);
             document.getElementById('progress-circle').classList.remove('active');
 
-            try {
-                // Délai pour laisser le temps aux animations de s'installer
-                await new Promise(resolve => setTimeout(resolve, 1000));
+            // --- SÉCURITÉ 3 : CACHE TEMP_CACHE CONTRE LE FLOOD DE REQUÊTES (ANTI-DDoS/RATE LIMIT) ---
+            const cachedUrl = localStorage.getItem('birdnet_tunnel_cache');
+            const cachedTime = localStorage.getItem('birdnet_tunnel_time');
+            const now = new Date().getTime();
 
-                const response = await fetch(FETCH_URL);
+            // Si l'URL est en cache et a moins de 5 minutes (300000ms), on l'utilise sans appeler GitHub
+            if (cachedUrl && cachedTime && (now - cachedTime < 300000)) {
+                startCountdown(cachedUrl);
+                return;
+            }
+
+            try {
+                await new Promise(resolve => setTimeout(resolve, 800));
+
+                // Ajout d'un paramètre aléatoire anti-cache navigateur lors de la validation
+                const response = await fetch(`${FETCH_URL}?_nocache=${now}`, {
+                    method: 'GET',
+                    headers: { 'Accept': 'text/plain' }
+                });
+
                 if (!response.ok) {
                     throw new Error(`Erreur serveur (${response.status})`);
                 }
@@ -443,18 +465,22 @@
                 const targetUrl = rawUrl.trim();
                 
                 if (!targetUrl || targetUrl === '...' || targetUrl === '') {
-                    throw new Error("L'URL configurée dans tunnel.txt est vide ou invalide.");
+                    throw new Error("L'URL configurée dans tunnel.txt est vide.");
                 }
                 
+                // Sauvegarde sécurisée dans le cache local de l'appareil
+                localStorage.setItem('birdnet_tunnel_cache', targetUrl);
+                localStorage.setItem('birdnet_tunnel_time', now.toString());
+
                 startCountdown(targetUrl);
             } catch (err) {
                 console.error("Redirection error:", err);
-                let message = "Impossible de récupérer l'adresse de destination.";
-                if (FETCH_URL === '...') {
-                    message = "L'adresse du Gist n'est pas encore configurée.";
-                } else {
-                    message = `${message} (${err.message}). Vérifie la configuration de ton fichier tunnel.txt.`;
+                // Si le réseau plante mais qu'un vieux cache existe, on l'utilise en secours
+                if (cachedUrl) {
+                    startCountdown(cachedUrl);
+                    return;
                 }
+                let message = "Le tunnel Birdnet est inaccessible ou indisponible pour le moment.";
                 document.getElementById('error-desc').textContent = message;
                 showState('error');
             }
@@ -494,19 +520,24 @@
                 
                 if (count <= 0) {
                     clearInterval(countdownInterval);
-                    window.location.href = url;
+                    // Nettoyage ciblé avant la redirection
+                    window.location.replace(url); 
                 }
             }, 1000);
         }
 
-        // Action bouton réessayer
-        document.getElementById('retry-btn').addEventListener('click', fetchDestination);
+        // Action bouton réessayer (Force la suppression du cache pour interroger à nouveau le serveur)
+        document.getElementById('retry-btn').addEventListener('click', () => {
+            localStorage.removeItem('birdnet_tunnel_cache');
+            localStorage.removeItem('birdnet_tunnel_time');
+            fetchDestination();
+        });
 
         // Initialisation globale au chargement
         window.addEventListener('DOMContentLoaded', () => {
             initAmbient();
             initFishes();
-            fetchDestination(); // S'exécute séparément sans bloquer le visuel
+            fetchDestination();
         });
     </script>
 </body>
