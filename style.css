@@ -1,488 +1,506 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap');
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Birdnet-Go — Le Lac</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700&family=Plus+Jakarta+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-glow: #0ea5e9; 
+            --secondary-glow: #38bdf8;
+            --bg-color: #031e30;
+            --card-bg: rgba(3, 30, 48, 0.45);
+            --border-color: rgba(255, 255, 255, 0.06);
+            --text-primary: #f0f9ff;
+            --text-secondary: #7dd3fc;
+            --error-color: #ef4444;
+        }
 
-:root {
-  --primary-glow: #10b981;
-  --secondary-glow: #06b6d4;
-  --bg-color: #070c0b;
-  --card-bg: rgba(13, 25, 21, 0.55);
-  --border-color: rgba(255, 255, 255, 0.08);
-  --text-primary: #f8fafc;
-  --text-secondary: #94a3b8;
-  --error-color: #ef4444;
-}
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: radial-gradient(circle at 50% 30%, #0c2d48 0%, #02111a 100%);
+            font-family: "Plus Jakarta Sans", sans-serif;
+            color: var(--text-primary);
+            overflow: hidden;
+            position: relative;
+        }
 
-body {
-  margin: 0;
-  padding: 0;
-  min-height: 100vh;
-  background-color: var(--bg-color);
-  background-image: 
-    radial-gradient(at 0% 0%, rgba(16, 185, 129, 0.12) 0px, transparent 50%),
-    radial-gradient(at 100% 100%, rgba(6, 182, 212, 0.12) 0px, transparent 50%),
-    radial-gradient(at 50% 50%, rgba(10, 20, 17, 0.8) 0px, var(--bg-color) 100%);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-family: "Plus Jakarta Sans", sans-serif;
-  color: var(--text-primary);
-  overflow: hidden;
-  position: relative;
-}
+        /* --- EFFETS AMBIANTS DU LAC --- */
+        .ambient-layer {
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+            pointer-events: none;
+        }
+        
+        .evaporation {
+            position: absolute;
+            bottom: 0;
+            width: 1.5px;
+            height: 1.5px;
+            background: rgba(56, 189, 248, 0.2);
+            border-radius: 50%;
+            animation: rise linear infinite;
+        }
 
-/* Background animated glow orbs */
-.bg-glow {
-  position: absolute;
-  border-radius: 50%;
-  filter: blur(120px);
-  z-index: 1;
-  opacity: 0.35;
-  pointer-events: none;
-  animation: float-glow 25s infinite alternate ease-in-out;
-}
+        @keyframes rise {
+            0% { transform: translateY(10vh) scale(1); opacity: 0; }
+            50% { opacity: 0.4; }
+            100% { transform: translateY(-110vh) scale(2); opacity: 0; }
+        }
 
-.bg-glow-1 {
-  width: 350px;
-  height: 350px;
-  background: var(--primary-glow);
-  top: 10%;
-  left: 10%;
-}
+        .drop-rain {
+            position: absolute;
+            width: 1px;
+            height: 15px;
+            background: linear-gradient(to bottom, transparent, rgba(56, 189, 248, 0.3));
+            animation: fall linear infinite;
+        }
 
-.bg-glow-2 {
-  width: 450px;
-  height: 450px;
-  background: var(--secondary-glow);
-  bottom: 10%;
-  right: 10%;
-  animation-delay: -7s;
-}
+        @keyframes fall {
+            0% { transform: translateY(-10vh); }
+            100% { transform: translateY(110vh); }
+        }
 
-@keyframes float-glow {
-  0% {
-    transform: translate(0, 0) scale(1);
-  }
-  100% {
-    transform: translate(80px, 40px) scale(1.2);
-  }
-}
+        /* --- PERCHE --- */
+        .perch-line {
+            position: absolute;
+            top: 180px;
+            right: 0;
+            width: 200px;
+            height: 1px;
+            background: linear-gradient(to left, rgba(255,255,255,0.15), transparent);
+            z-index: 5;
+        }
 
-/* Container & Card */
-.container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 100%;
-  padding: 20px;
-  z-index: 10;
-}
+        /* --- MARTIN-PÊCHEUR --- */
+        .kingfisher-container {
+            position: absolute;
+            top: 112px;
+            right: 40px;
+            width: 90px;
+            height: 90px;
+            z-index: 20;
+            cursor: pointer;
+            transform: scaleX(-1);
+            animation: gentle-breath 4s ease-in-out infinite;
+            transition: transform 0.2s;
+        }
 
-.redirect-card {
-  width: 100%;
-  max-width: 420px;
-  padding: 40px 30px;
-  background: var(--card-bg);
-  border: 1px solid var(--border-color);
-  border-radius: 28px;
-  box-shadow: 
-    0 10px 40px rgba(0, 0, 0, 0.5),
-    0 1px 3px rgba(0, 0, 0, 0.3),
-    inset 0 1px 2px rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  animation: card-appear 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
+        @keyframes gentle-breath {
+            0%, 100% { transform: scaleX(-1) translateY(0); }
+            50% { transform: scaleX(-1) translateY(-3px); }
+        }
 
-@keyframes card-appear {
-  from {
-    opacity: 0;
-    transform: translateY(20px) scale(0.98);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
+        .kingfisher-container.diving {
+            animation: dive-action 1.8s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+        }
 
-/* Logo & Headers */
-.logo-wrapper {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 76px;
-  height: 76px;
-  border-radius: 20px;
-  background: rgba(16, 185, 129, 0.1);
-  border: 1px solid rgba(16, 185, 129, 0.2);
-  color: var(--primary-glow);
-  margin-bottom: 24px;
-}
+        @keyframes dive-action {
+            0% { transform: scaleX(-1) translate(0, 0) rotate(0deg); }
+            25% { transform: scaleX(-1) translate(-140px, 320px) rotate(-55deg) scale(0.9); }
+            45% { transform: scaleX(-1) translate(-160px, 330px) rotate(-20deg) scale(0.9); }
+            100% { transform: scaleX(-1) translate(0, 0) rotate(0deg); }
+        }
 
-.logo-wrapper::after {
-  content: '';
-  position: absolute;
-  inset: -4px;
-  border-radius: 24px;
-  border: 1px solid rgba(16, 185, 129, 0.1);
-  opacity: 0.6;
-}
+        /* --- POISSONS --- */
+        .fish-layer {
+            position: absolute;
+            bottom: 6%;
+            width: 100%;
+            height: 15%;
+            z-index: 2;
+            pointer-events: none;
+            opacity: 0.25;
+        }
+        .fish {
+            position: absolute;
+            animation: swim linear infinite;
+        }
+        @keyframes swim {
+            0% { transform: translateX(-50px) scaleX(-1); }
+            100% { transform: translateX(110vw) scaleX(-1); }
+        }
 
-.bird-logo {
-  filter: drop-shadow(0 0 8px rgba(16, 185, 129, 0.4));
-  animation: logo-float 4s ease-in-out infinite;
-}
+        /* --- INTERFACE CARD --- */
+        .container {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+        }
 
-@keyframes logo-float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-4px); }
-}
+        .redirect-card {
+            width: 100%;
+            max-width: 380px;
+            padding: 45px 35px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 32px;
+            box-shadow: 0 30px 70px rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            animation: card-appear 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
 
-h1 {
-  font-family: "Outfit", sans-serif;
-  font-size: 1.8rem;
-  font-weight: 700;
-  margin-bottom: 12px;
-  letter-spacing: -0.025em;
-  background: linear-gradient(135deg, #ffffff 30%, #a7f3d0 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
+        @keyframes card-appear {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
 
-/* States layout */
-.state-container {
-  display: none;
-  width: 100%;
-  flex-direction: column;
-  align-items: center;
-}
+        .logo-wrapper {
+            width: 64px; height: 64px;
+            border-radius: 18px;
+            background: rgba(14, 165, 233, 0.08);
+            border: 1px solid rgba(14, 165, 233, 0.2);
+            color: var(--secondary-glow);
+            margin-bottom: 24px;
+            display: flex; align-items: center; justify-content: center;
+        }
 
-.state-container.active {
-  display: flex;
-  animation: state-fade-in 0.4s ease forwards;
-}
+        h1 {
+            font-family: "Outfit", sans-serif;
+            font-size: 1.6rem;
+            font-weight: 500;
+            letter-spacing: -0.5px;
+            margin-bottom: 8px;
+            color: #fff;
+        }
 
-@keyframes state-fade-in {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
+        .state-container { display: none; width: 100%; flex-direction: column; align-items: center; }
+        .state-container.active { display: flex; }
 
-/* Loading State (Spinner) */
-.spinner {
-  width: 48px;
-  height: 48px;
-  position: relative;
-  margin: 30px 0;
-}
+        /* Spinner de chargement */
+        .spinner {
+            width: 32px; height: 32px;
+            border: 2px solid rgba(255,255,255,0.05);
+            border-top-color: var(--secondary-glow);
+            border-radius: 50%;
+            margin: 40px 0;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
-.double-bounce1, .double-bounce2 {
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  background-color: var(--primary-glow);
-  opacity: 0.6;
-  position: absolute;
-  top: 0;
-  left: 0;
-  animation: bounce 2.0s infinite ease-in-out;
-  box-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
-}
+        .subtitle { font-size: 0.85rem; color: #64748b; margin-bottom: 12px; font-weight: 400; }
+        .status-text { color: #64748b; font-size: 0.85rem; }
 
-.double-bounce2 {
-  background-color: var(--secondary-glow);
-  animation-delay: -1.0s;
-  box-shadow: 0 0 15px rgba(6, 182, 212, 0.4);
-}
+        /* Badge de Destination cliquable (Copie) */
+        .destination-badge {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 8px 16px; background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 100px;
+            margin-bottom: 28px; color: var(--text-secondary); font-size: 0.8rem;
+            text-decoration: none; font-weight: 500; cursor: pointer;
+            transition: all 0.2s;
+        }
+        .destination-badge:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(56, 189, 248, 0.3);
+        }
+        
+        .copy-icon-wrapper { display: flex; align-items: center; }
+        .check-icon { display: none; stroke: #10b981; }
+        .destination-badge.copied .copy-icon { display: none; }
+        .destination-badge.copied .check-icon { display: inline; }
 
-@keyframes bounce {
-  0%, 100% { 
-    transform: scale(0.0);
-  } 50% { 
-    transform: scale(1.0);
-  }
-}
+        /* Roue de compte à rebours */
+        .countdown-wheel { position: relative; width: 90px; height: 90px; margin-bottom: 16px; display: flex; align-items: center; justify-content: center; }
+        .circle-progress { stroke-dasharray: 100.53; stroke-dashoffset: 0; transform: rotate(-90deg); transform-origin: center; }
+        .circle-progress.active { animation: countdown-circle 3s linear forwards; }
+        @keyframes countdown-circle { from { stroke-dashoffset: 0; } to { stroke-dashoffset: 100.53; } }
+        .countdown-number { position: absolute; font-size: 2.2rem; font-weight: 500; color: #fff; font-family: "Outfit", sans-serif; }
+        .countdown-caption { font-size: 0.8rem; color: #64748b; margin-bottom: 24px; }
 
-.status-text {
-  font-size: 0.95rem;
-  color: var(--text-secondary);
-}
+        /* Boutons d'action */
+        .action-btn {
+            width: 100%; padding: 14px; border-radius: 14px;
+            font-size: 0.9rem; font-weight: 600; text-decoration: none; border: none; cursor: pointer; transition: 0.2s;
+            background: #fff; color: #02111a; text-align: center;
+            display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .action-btn:hover { background: #e2e8f0; transform: translateY(-1px); }
 
-/* Countdown State */
-.subtitle {
-  font-size: 0.9rem;
-  color: var(--text-secondary);
-  margin-bottom: 8px;
-}
+        /* Styles d'erreur */
+        .error-icon-wrapper {
+            color: var(--error-color);
+            margin: 20px 0 15px 0;
+        }
+        .error-title { font-size: 1.2rem; color: var(--error-color); font-weight: 600; margin-bottom: 8px; }
+        .error-message { color: #64748b; font-size: 0.85rem; line-height: 1.4; margin-bottom: 20px; }
+        .retry-btn { background: rgba(239, 68, 68, 0.1); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.2); }
+        .retry-btn:hover { background: rgba(239, 68, 68, 0.2); color: #fff; }
+    </style>
+</head>
+<body>
 
-.destination-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 16px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 100px;
-  margin-bottom: 24px;
-  max-width: 100%;
-  font-family: inherit;
-  color: inherit;
-  cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-  outline: none;
-}
+    <div class="perch-line"></div>
 
-.destination-badge:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.15);
-  transform: translateY(-1px);
-}
+    <div class="kingfisher-container" id="kingfisher">
+        <svg viewBox="0 0 120 120" width="100%" height="100%">
+            <defs>
+                <linearGradient id="feather-blue" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#00e5ff"/>
+                    <stop offset="100%" stop-color="#0066cc"/>
+                </linearGradient>
+                <linearGradient id="belly-orange" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#ff9100"/>
+                    <stop offset="100%" stop-color="#d84315"/>
+                </linearGradient>
+            </defs>
+            <path d="M52,45 C65,45 76,58 74,82 C72,92 64,102 54,102 C46,92 45,72 52,45 Z" fill="url(#belly-orange)" />
+            <path d="M66,52 C71,54 73,58 70,62 C66,59 64,55 66,52 Z" fill="#ffffff" opacity="0.9"/>
+            <path d="M48,28 C62,28 66,36 65,46 C60,58 50,75 48,98 L41,101 L39,88 C36,68 38,43 48,28 Z" fill="url(#feather-blue)" />
+            <path d="M48,28 C59,28 65,35 64,44 C57,42 52,37 48,28 Z" fill="#00e5ff" />
+            <path d="M62,40 L104,44 L61,46 Z" fill="#1e293b" />
+            <circle cx="56" cy="37" r="2" fill="#ffffff" />
+            <circle cx="56" cy="37" r="0.9" fill="#0f172a" />
+        </svg>
+    </div>
 
-.destination-badge:focus-visible {
-  border-color: var(--primary-glow);
-  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
-}
+    <div class="ambient-layer" id="ambientLayer"></div>
+    <div class="fish-layer" id="fishLayer"></div>
 
-.destination-badge:active {
-  transform: translateY(0);
-}
+    <div class="container">
+        <div class="redirect-card">
+            <div class="logo-wrapper">
+                <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z" />
+                </svg>
+            </div>
 
-.copy-icon-wrapper {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--text-secondary);
-  transition: color 0.2s ease;
-  margin-left: 4px;
-}
+            <h1>Birdnet-Go Timéo</h1>
 
-.destination-badge:hover .copy-icon-wrapper {
-  color: var(--primary-glow);
-}
+            <div id="state-loading" class="state-container active">
+                <div class="spinner"></div>
+                <p class="status-text">Connexion au lac en cours...</p>
+            </div>
 
-.copy-icon-wrapper .check-icon {
-  display: none;
-  color: var(--primary-glow);
-}
+            <div id="state-countdown" class="state-container">
+                <p class="subtitle">Vous allez être redirigé vers</p>
+                
+                <button id="copy-badge" type="button" class="destination-badge" title="Copier l'adresse">
+                    <span>🔗</span>
+                    <span id="destination-name">...</span>
+                    <span class="copy-icon-wrapper">
+                        <svg class="copy-icon" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                        </svg>
+                        <svg class="check-icon" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                    </span>
+                </button>
 
-.destination-badge.copied .copy-icon {
-  display: none;
-}
+                <div class="countdown-wheel">
+                    <svg viewBox="0 0 36 36" width="90" height="90">
+                        <circle cx="18" cy="18" r="16" fill="none" stroke="rgba(255,255,255,0.03)" stroke-width="2"/>
+                        <circle id="progress-circle" class="circle-progress" cx="18" cy="18" r="16" fill="none" stroke="var(--secondary-glow)" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    <div class="countdown-number" id="countdown-num">3</div>
+                </div>
+                
+                <p class="countdown-caption">Redirection automatique...</p>
 
-.destination-badge.copied .check-icon {
-  display: block;
-  animation: check-pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-}
+                <a id="direct-btn" href="#" class="action-btn">
+                    <span>Y aller maintenant</span>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                        <polyline points="12 5 19 12 12 19"></polyline>
+                    </svg>
+                </a>
+            </div>
 
-@keyframes check-pop {
-  0% { transform: scale(0.5); opacity: 0; }
-  100% { transform: scale(1); opacity: 1; }
-}
+            <div id="state-error" class="state-container">
+                <div class="error-icon-wrapper">
+                    <svg viewBox="0 0 24 24" width="42" height="42" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="8" x2="12" y2="12"></line>
+                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                    </svg>
+                </div>
+                <h3 class="error-title">Lac introuvable</h3>
+                <p class="error-message" id="error-desc">Impossible de joindre le serveur de redirection ou tunnel non configuré.</p>
+                <button id="retry-btn" type="button" class="action-btn retry-btn">Réessayer</button>
+            </div>
+        </div>
+    </div>
 
-/* Tooltip */
-.destination-badge::after {
-  content: 'Copier l\'adresse';
-  position: absolute;
-  bottom: 125%;
-  left: 50%;
-  transform: translateX(-50%) translateY(4px);
-  background: #0d1915;
-  border: 1px solid var(--border-color);
-  color: var(--text-primary);
-  padding: 6px 10px;
-  font-size: 0.75rem;
-  border-radius: 8px;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.15s ease, transform 0.15s ease;
-  white-space: nowrap;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
-  font-weight: 500;
-  z-index: 100;
-}
+    <script>
+        const ambientLayer = document.getElementById('ambientLayer');
+        const fishLayer = document.getElementById('fishLayer');
+        const kingfisher = document.getElementById('kingfisher');
+        
+        const FETCH_URL = 'https://gist.githubusercontent.com/timeobonnin-prog/e9b4811717618a200e3e2447d553348f/raw/tunnel.txt';
+        
+        let countdownInterval = null;
+        let targetRedirectUrl = '';
 
-.destination-badge:hover::after {
-  opacity: 1;
-  transform: translateX(-50%) translateY(0);
-}
+        // --- ANIMATIONS VISUELLES ---
+        function initAmbient() {
+            ambientLayer.innerHTML = ''; // Nettoyer pour les "retry"
+            for(let i = 0; i < 35; i++) {
+                let drop = document.createElement('div');
+                drop.className = 'drop-rain';
+                drop.style.left = Math.random() * 100 + 'vw';
+                drop.style.animationDuration = (0.6 + Math.random() * 0.6) + 's';
+                drop.style.animationDelay = Math.random() * 2 + 's';
+                ambientLayer.appendChild(drop);
+            }
+            for(let i = 0; i < 20; i++) {
+                let v = document.createElement('div');
+                v.className = 'evaporation';
+                v.style.left = Math.random() * 100 + 'vw';
+                v.style.animationDuration = (4 + Math.random() * 4) + 's';
+                v.style.animationDelay = Math.random() * 3 + 's';
+                ambientLayer.appendChild(v);
+            }
+        }
 
-.destination-badge.copied::after {
-  content: 'Copié !';
-  background: var(--primary-glow);
-  color: #04120e;
-  border-color: var(--primary-glow);
-}
+        function initFishes() {
+            fishLayer.innerHTML = '';
+            for(let i = 0; i < 3; i++) {
+                let fish = document.createElement('div');
+                fish.className = 'fish';
+                fish.style.top = Math.random() * 100 + '%';
+                fish.style.animationDuration = (12 + Math.random() * 8) + 's';
+                fish.style.animationDelay = Math.random() * 4 + 's';
+                fish.innerHTML = `<svg viewBox="0 0 30 15" width="25" height="12"><path d="M2,7 C10,2 20,2 25,7 C20,12 10,12 2,7 Z" fill="rgba(56, 189, 248, 0.4)"/><path d="M24,7 L30,3 L29,11 Z" fill="rgba(56, 189, 248, 0.3)"/></svg>`;
+                fishLayer.appendChild(fish);
+            }
+        }
 
+        function dive() {
+            if (!kingfisher.classList.contains('diving')) {
+                kingfisher.classList.add('diving');
+                setTimeout(() => kingfisher.classList.remove('diving'), 1800);
+            }
+        }
+        
+        kingfisher.addEventListener('click', dive);
+        setInterval(dive, 14000);
 
-.destination-icon {
-  font-size: 1rem;
-}
+        // --- LOGIQUE DES ÉTATS DE L'UI ---
+        function showState(stateName) {
+            document.querySelectorAll('.state-container').forEach(el => el.classList.remove('active'));
+            const target = document.getElementById(`state-${stateName}`);
+            if (target) target.classList.add('active');
+        }
 
-.destination-name {
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: #ffffff;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
+        // --- LOGIQUE DE COPIE CLIPBOARD ---
+        const copyBadge = document.getElementById('copy-badge');
+        if (copyBadge) {
+            copyBadge.addEventListener('click', async () => {
+                if (!targetRedirectUrl) return;
+                try {
+                    await navigator.clipboard.writeText(targetRedirectUrl);
+                    copyBadge.classList.add('copied');
+                    setTimeout(() => copyBadge.classList.remove('copied'), 2000);
+                } catch (err) {
+                    console.error('Erreur lors du copier: ', err);
+                }
+            });
+        }
 
-.countdown-wheel {
-  position: relative;
-  width: 120px;
-  height: 120px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 20px;
-}
+        // --- RECUPERATION DU GIST ET REDIRECTION ---
+        async function fetchDestination() {
+            showState('loading');
+            if (countdownInterval) clearInterval(countdownInterval);
+            document.getElementById('progress-circle').classList.remove('active');
 
-.countdown-number {
-  position: absolute;
-  font-size: 2.6rem;
-  font-weight: 700;
-  color: #ffffff;
-  font-family: "Outfit", sans-serif;
-  text-shadow: 0 0 12px rgba(16, 185, 129, 0.25);
-  animation: heart-beat 1s infinite alternate ease-in-out;
-}
+            try {
+                // Petit délai artificiel pour stabiliser l'ambiance
+                await new Promise(resolve => setTimeout(resolve, 1000));
 
-@keyframes heart-beat {
-  from { transform: scale(0.95); }
-  to { transform: scale(1.05); }
-}
+                const response = await fetch(FETCH_URL);
+                if (!response.ok) {
+                    throw new Error(`Erreur serveur (${response.status})`);
+                }
+                
+                const rawUrl = await response.text();
+                const targetUrl = rawUrl.trim();
+                
+                if (!targetUrl || targetUrl === '...' || targetUrl === '') {
+                    throw new Error("L'URL configurée dans tunnel.txt est vide ou invalide.");
+                }
+                
+                startCountdown(targetUrl);
+            } catch (err) {
+                console.error("Redirection error:", err);
+                let message = "Impossible de récupérer l'adresse de destination.";
+                if (FETCH_URL === '...') {
+                    message = "L'adresse du Gist n'est pas encore configurée.";
+                } else {
+                    message = `${message} (${err.message}). Vérifie la configuration de ton fichier tunnel.txt.`;
+                }
+                document.getElementById('error-desc').textContent = message;
+                showState('error');
+            }
+        }
 
-.circle-progress {
-  stroke-dasharray: 100.53;
-  stroke-dashoffset: 0;
-  transform-origin: center;
-  transform: rotate(-90deg);
-}
+        function startCountdown(url) {
+            targetRedirectUrl = url;
+            showState('countdown');
+            
+            const destNameEl = document.getElementById('destination-name');
+            try {
+                if (url.startsWith('http://') || url.startsWith('https://')) {
+                    const parsed = new URL(url);
+                    destNameEl.textContent = parsed.hostname + (parsed.port ? `:${parsed.port}` : '');
+                } else {
+                    destNameEl.textContent = url;
+                }
+            } catch (e) {
+                destNameEl.textContent = url;
+            }
 
-.circle-progress.active {
-  animation: countdown-circle 3s linear forwards;
-}
+            document.getElementById('direct-btn').href = url;
+            
+            const progressCircle = document.getElementById('progress-circle');
+            // Force le redémarrage de l'animation CSS du cercle de chargement
+            progressCircle.style.animation = 'none';
+            progressCircle.offsetHeight; /* trigger reflow */
+            progressCircle.style.animation = null;
+            progressCircle.classList.add('active');
+            
+            let count = 3; // Décompte propre de 3 secondes
+            const countdownNum = document.getElementById('countdown-num');
+            countdownNum.textContent = count;
+            
+            countdownInterval = setInterval(() => {
+                count--;
+                countdownNum.textContent = count;
+                
+                if (count <= 0) {
+                    clearInterval(countdownInterval);
+                    window.location.href = url;
+                }
+            }, 1000);
+        }
 
-@keyframes countdown-circle {
-  from {
-    stroke-dashoffset: 0;
-  }
-  to {
-    stroke-dashoffset: 100.53;
-  }
-}
+        // Action bouton réessayer
+        document.getElementById('retry-btn').addEventListener('click', fetchDestination);
 
-.countdown-caption {
-  font-size: 0.85rem;
-  color: var(--text-secondary);
-  margin-bottom: 24px;
-}
-
-/* Buttons */
-.action-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  width: 100%;
-  padding: 14px 24px;
-  border-radius: 14px;
-  font-size: 0.95rem;
-  font-weight: 600;
-  text-decoration: none;
-  cursor: pointer;
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  border: none;
-  font-family: inherit;
-}
-
-.primary-btn {
-  background: linear-gradient(135deg, var(--primary-glow) 0%, #059669 100%);
-  color: #04120e;
-  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.25);
-}
-
-.primary-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.35);
-  background: linear-gradient(135deg, #34d399 0%, #059669 100%);
-}
-
-.primary-btn:active {
-  transform: translateY(0);
-}
-
-.secondary-btn {
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  color: var(--text-primary);
-}
-
-.secondary-btn:hover {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.15);
-  transform: translateY(-1px);
-}
-
-.text-btn {
-  background: transparent;
-  color: var(--text-secondary);
-  font-size: 0.85rem;
-  padding: 10px;
-}
-
-.text-btn:hover {
-  color: var(--text-primary);
-  text-decoration: underline;
-}
-
-/* Error state */
-.error-icon-wrapper {
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  background: rgba(239, 68, 68, 0.1);
-  border: 1px solid rgba(239, 68, 68, 0.2);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--error-color);
-  margin-bottom: 20px;
-}
-
-h3 {
-  font-family: "Outfit", sans-serif;
-  font-size: 1.3rem;
-  font-weight: 600;
-  margin-bottom: 8px;
-}
-
-.error-message {
-  font-size: 0.9rem;
-  color: var(--text-secondary);
-  margin-bottom: 28px;
-  line-height: 1.5;
-}
-
-.btn-group {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
+        // Initialisation globale au chargement
+        window.addEventListener('DOMContentLoaded', () => {
+            initAmbient();
+            initFishes();
+            fetchDestination();
+        });
+    </script>
+</body>
+</html>
