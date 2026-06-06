@@ -12,68 +12,351 @@
         }
 
         body {
-            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
             height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            color: #ffffff;
-            /* Arrière-plan nature épuré avec un léger flou */
-            background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), 
-                        url('https://images.unsplash.com/photo-1448375240586-882707db888b?q=80&w=1920&auto=format&fit=crop') no-repeat center center fixed;
-            background-size: cover;
-            backdrop-filter: blur(5px);
+            color: #f1f5f9;
+            background: #020504;
+            position: relative;
+            overflow: hidden;
             text-align: center;
         }
 
-        /* Conteneur principal épuré */
+        /* Arrière-plan Forêt */
+        .bg-forest {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(180deg, rgba(2, 5, 4, 0.7) 0%, rgba(3, 10, 8, 0.9) 100%), 
+                        url('https://images.unsplash.com/photo-1448375240586-882707db888b?q=80&w=1920&auto=format&fit=crop') no-repeat center center;
+            background-size: cover;
+            filter: saturate(0.6) contrast(1.1);
+            z-index: 1;
+        }
+
+        /* Brume de forêt animée en bas */
+        .forest-mist {
+            position: absolute;
+            bottom: -50px;
+            left: 0;
+            width: 100%;
+            height: 300px;
+            background: linear-gradient(to top, rgba(52, 211, 153, 0.15), transparent);
+            filter: blur(20px);
+            z-index: 2;
+            animation: mistDrift 10s infinite alternate ease-in-out;
+            pointer-events: none;
+        }
+
+        @keyframes mistDrift {
+            0% { transform: translateY(0) scaleX(1); opacity: 0.5; }
+            100% { transform: translateY(-20px) scaleX(1.1); opacity: 0.8; }
+        }
+
+        /* Les Lucioles magiques */
+        .fireflies {
+            position: absolute;
+            width: 100%; height: 100%;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .firefly {
+            position: absolute;
+            width: 4px; height: 4px;
+            background: #bef264;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #bef264, 0 0 20px #bef264, 0 0 30px #eab308;
+            opacity: 0;
+        }
+
+        .f1 { bottom: 20%; left: 10%; animation: floatLuciole1 12s infinite ease-in-out; }
+        .f2 { bottom: 40%; left: 80%; animation: floatLuciole2 15s infinite ease-in-out 2s; }
+        .f3 { bottom: 60%; left: 30%; animation: floatLuciole3 10s infinite ease-in-out 4s; }
+        .f4 { bottom: 10%; left: 60%; animation: floatLuciole1 14s infinite ease-in-out 1s; }
+        .f5 { bottom: 50%; left: 50%; animation: floatLuciole2 18s infinite ease-in-out 3s; }
+
+        @keyframes floatLuciole1 {
+            0% { transform: translate(0, 0) scale(0.8); opacity: 0; }
+            20% { opacity: 1; }
+            50% { transform: translate(100px, -150px) scale(1.2); opacity: 0.6; }
+            80% { opacity: 1; }
+            100% { transform: translate(-50px, -250px) scale(0.8); opacity: 0; }
+        }
+        @keyframes floatLuciole2 {
+            0% { transform: translate(0, 0) scale(1); opacity: 0; }
+            20% { opacity: 0.8; }
+            50% { transform: translate(-120px, -100px) scale(1.5); opacity: 1; }
+            80% { opacity: 0.5; }
+            100% { transform: translate(80px, -200px) scale(1); opacity: 0; }
+        }
+        @keyframes floatLuciole3 {
+            0% { transform: translate(0, 0); opacity: 0; }
+            20% { opacity: 1; }
+            50% { transform: translate(60px, 80px); opacity: 0.4; }
+            80% { opacity: 1; }
+            100% { transform: translate(-100px, 150px); opacity: 0; }
+        }
+
+        /* Carte Interface Nature */
         .card {
-            background: rgba(255, 255, 255, 0.03); /* Presque invisible */
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            padding: 60px 40px;
+            position: relative;
+            z-index: 3;
+            background: rgba(4, 8, 7, 0.65);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(52, 211, 153, 0.1);
+            border-top: 5px solid #4a3022; /* Fait office de branche pour la chouette */
+            padding: 50px 40px;
             border-radius: 20px;
             width: 90%;
-            max-width: 480px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
-            animation: fadeIn 1s ease;
+            max-width: 450px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.7);
         }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* Icone minimaliste de chargement */
-        .loader {
-            width: 24px;
-            height: 24px;
-            border: 2px solid rgba(255,255,255,0.2);
-            border-top: 2px solid #ffffff;
-            border-radius: 50%;
-            display: inline-block;
-            margin-bottom: 25px;
-            animation: spin 1s linear infinite;
+        /* --- NOUVEAU : La chouette qui dort --- */
+        .owl-container {
+            position: absolute;
+            top: -42px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 35px; /* Taille de la chouette */
+            z-index: 10;
+            display: flex;
         }
 
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        /* Animation de respiration pour la chouette */
+        .owl {
+            animation: owlBreathe 4s infinite ease-in-out;
+            filter: drop-shadow(0 5px 5px rgba(0,0,0,0.5));
+        }
+
+        @keyframes owlBreathe {
+            0%, 100% { transform: scaleY(1); }
+            50% { transform: scaleY(0.95) translateY(2px); }
+        }
+
+        /* Les Zzz de la chouette */
+        .zzz {
+            position: absolute;
+            color: #bef264;
+            font-size: 14px;
+            font-weight: bold;
+            font-family: 'Comic Sans MS', sans-serif;
+            opacity: 0;
+        }
+
+        .z1 { top: -10px; right: -15px; animation: floatZ 4s infinite ease-in; }
+        .z2 { top: -20px; right: -5px; animation: floatZ 4s infinite ease-in 1.3s; font-size: 10px; }
+        .z3 { top: -5px; right: -25px; animation: floatZ 4s infinite ease-in 2.6s; font-size: 16px; }
+
+        @keyframes floatZ {
+            0% { transform: translate(0, 0) scale(0.5) rotate(-10deg); opacity: 0; }
+            20% { opacity: 0.8; }
+            50% { transform: translate(15px, -25px) scale(1) rotate(10deg); opacity: 1; }
+            100% { transform: translate(30px, -50px) scale(1.5) rotate(20deg); opacity: 0; }
+        }
+
+        /* --- NOUVEAU : Lianes qui pendent --- */
+        .vines {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            border-radius: 20px;
+        }
+        .vine {
+            position: absolute;
+            top: 0;
+            width: 3px;
+            background: linear-gradient(to bottom, #166534, #22c55e);
+            border-radius: 0 0 5px 5px;
+            box-shadow: 0 0 5px rgba(34, 197, 94, 0.5);
+        }
+        .v1 { left: 10%; height: 40px; }
+        .v2 { left: 25%; height: 20px; width: 2px; }
+        .v3 { right: 15%; height: 50px; }
+        .v4 { right: 30%; height: 30px; }
 
         h1 {
-            font-size: 1.6rem;
+            font-size: 1.35rem;
             font-weight: 300;
-            letter-spacing: 2px;
-            margin-bottom: 15px;
+            letter-spacing: 4px;
+            margin-bottom: 20px;
+            margin-top: 10px;
             text-transform: uppercase;
+            color: #ecfdf5;
         }
 
         p {
             font-weight: 300;
-            font-size: 1rem;
-            color: rgba(255,255,255,0.7);
-            line-height: 1.6;
-            margin-bottom: 40px;
+            font-size: 0.95rem;
+            color: #94a3b8;
+            line-height: 1.7;
+            margin-bottom: 20px;
         }
 
-        /* Bouton minimaliste */
-        .btn {
+        /* Séquence Terre, Plante et Bouton */
+        .sequence-container {
+            position: relative;
+            height: 120px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            margin-top: 30px;
+        }
+
+        /* La terre qui tombe (0 à 2 secondes) */
+        .dirt-particles {
+            position: absolute;
+            top: -40px;
+            display: flex;
+            gap: 10px;
+        }
+        .dirt-drop {
+            width: 6px; height: 6px;
+            background: #5c4033;
+            border-radius: 50%;
+            opacity: 0;
+        }
+        .d1 { animation: fallDirt 1s ease-in forwards 0.2s; }
+        .d2 { animation: fallDirt 1s ease-in forwards 0.6s; width: 8px; height: 8px; }
+        .d3 { animation: fallDirt 1s ease-in forwards 1s; }
+        .d4 { animation: fallDirt 1s ease-in forwards 1.4s; width: 5px; height: 5px; }
+
+        @keyframes fallDirt {
+            0% { transform: translateY(0); opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(100px); opacity: 0; }
+        }
+
+        /* Le monticule de terre */
+        .dirt-mound {
+            position: absolute;
+            bottom: 0;
+            width: 50px;
+            height: 15px;
+            background: #4a3022;
+            border-radius: 50px 50px 0 0;
+            opacity: 0;
+            transform: scaleY(0);
+            transform-origin: bottom;
+            animation: formMound 1s ease-out forwards 1.5s;
+        }
+
+        @keyframes formMound {
+            to { opacity: 1; transform: scaleY(1); }
+        }
+
+        /* La plante qui germe (à 4 secondes) */
+        .plant-sprout {
+            position: absolute;
+            bottom: 10px;
+            width: 4px;
+            height: 40px;
+            background: #34d399;
+            border-radius: 10px;
+            transform: scaleY(0);
+            transform-origin: bottom;
+            box-shadow: 0 0 15px #34d399;
+            animation: growPlant 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards 4s;
+            z-index: 2;
+        }
+
+        @keyframes growPlant {
+            to { transform: scaleY(1); }
+        }
+
+        /* Le bouton illuminé */
+        .btn-magic {
             display: inline-block;
+            position: relative;
+            z-index: 3;
+            padding: 14px 38px;
+            background: #020504;
+            color: #34d399;
+            text-decoration: none;
+            border-radius: 30px;
+            font-weight: 500;
+            font-size: 0.85rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            border: 1px solid #34d399;
+            margin-bottom: 25px;
+            
+            opacity: 0;
+            transform: translateY(10px);
+            
+            animation: revealGlowButton 1.5s ease-out forwards 4.5s;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes revealGlowButton {
+            0% { opacity: 0; transform: translateY(10px); box-shadow: 0 0 0 rgba(52, 211, 153, 0); }
+            50% { opacity: 1; transform: translateY(0); box-shadow: 0 0 40px rgba(52, 211, 153, 0.8); }
+            100% { opacity: 1; transform: translateY(0); box-shadow: 0 0 20px rgba(52, 211, 153, 0.4); }
+        }
+
+        .btn-magic:hover {
+            background: #34d399;
+            color: #020504;
+            box-shadow: 0 0 35px rgba(52, 211, 153, 0.7);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-forest"></div>
+    <div class="forest-mist"></div>
+    
+    <div class="fireflies">
+        <div class="firefly f1"></div>
+        <div class="firefly f2"></div>
+        <div class="firefly f3"></div>
+        <div class="firefly f4"></div>
+        <div class="firefly f5"></div>
+    </div>
+
+    <div class="card">
+        
+        <div class="vines">
+            <div class="vine v1"></div>
+            <div class="vine v2"></div>
+            <div class="vine v3"></div>
+            <div class="vine v4"></div>
+        </div>
+
+        <div class="owl-container">
+            <div class="owl">🦉</div>
+            <div class="zzz z1">Z</div>
+            <div class="zzz z2">z</div>
+            <div class="zzz z3">z</div>
+        </div>
+
+        <h1>Station Hors Ligne</h1>
+        <p>Le serveur se repose un instant. La forêt reprend ses droits en attendant le retour de la connexion...</p>
+        
+        <div class="sequence-container">
+            <a href="https://timeo-photographie-4.webnode.fr/" class="btn-magic">
+                Rejoindre le site
+            </a>
+
+            <div class="dirt-particles">
+                <div class="dirt-drop d1"></div>
+                <div class="dirt-drop d2"></div>
+                <div class="dirt-drop d3"></div>
+                <div class="dirt-drop d4"></div>
+            </div>
+
+            <div class="plant-sprout"></div>
+            <div class="dirt-mound"></div>
+        </div>
+    </div>
+
+</body>
+</html>
             padding: 12px 28px;
             background: #ffffff;
             color: #333;
