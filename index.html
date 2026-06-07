@@ -442,6 +442,8 @@
             try {
                 await new Promise(resolve => setTimeout(resolve, 1000));
 
+                const raw = await res.text();
+                const url = (raw === 'PC OFF — Tunnel arrêté') ? "offline.html" : raw.trim();
                 const response = await fetch(FETCH_URL);
                 if (!response.ok) {
                     throw new Error(`Erreur serveur (${response.status})`);
@@ -481,7 +483,12 @@
         function startCountdown(url) {
             targetRedirectUrl = url;
             showState('countdown');
-            
+
+            const dest = document.getElementById('destination-name');
+
+            if (url === 'offline.html') {
+                dest.textContent = 'Birdnet-Go est actuellement hors ligne';
+            }    
             const destNameEl = document.getElementById('destination-name');
             try {
                 if (url.startsWith('http://') || url.startsWith('https://')) {
