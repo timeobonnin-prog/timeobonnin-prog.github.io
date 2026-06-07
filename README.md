@@ -11,7 +11,7 @@ Voir lien : https://timeobonnin-prog.github.io
 
 
 
-Vous pouvez contribuez au depot en demandant une modification dans le pullrequest
+Vous pouvez contribuez au depot en demandant une modification dans le pullrequest : [ici](https://github.com/timeobonnin-prog/timeobonnin-prog.github.io/pulls)
 
 
 
