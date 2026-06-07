@@ -140,8 +140,8 @@
             position: absolute;
             bottom: 8%;
             left: 5%;
-            width: 80px;
-            height: 60px;
+            width: 100px;
+            height: 70px;
             z-index: 4;
             cursor: pointer;
             animation: otter-swim 6s ease-in-out infinite;
@@ -403,31 +403,80 @@
     <div class="water-source" id="waterSource"></div>
     
     <div class="otter-container" id="otter">
-        <svg viewBox="0 0 100 80" width="100%" height="100%">
+        <svg viewBox="0 0 100 70" width="100%" height="100%">
             <defs>
-                <linearGradient id="otter-brown" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stop-color="#8B6F47"/>
-                    <stop offset="100%" stop-color="#654321"/>
+                <linearGradient id="otter-body" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#A0764A"/>
+                    <stop offset="100%" stop-color="#7A5A38"/>
+                </linearGradient>
+                <linearGradient id="otter-belly" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#C49060"/>
+                    <stop offset="100%" stop-color="#A0764A"/>
                 </linearGradient>
             </defs>
-            <!-- Corps -->
-            <ellipse cx="50" cy="50" rx="35" ry="25" fill="url(#otter-brown)"/>
-            <!-- Tête -->
-            <circle cx="25" cy="40" r="20" fill="url(#otter-brown)"/>
-            <!-- Oreilles -->
-            <circle cx="15" cy="25" r="6" fill="url(#otter-brown)"/>
-            <circle cx="35" cy="20" r="6" fill="url(#otter-brown)"/>
-            <!-- Yeux -->
-            <circle cx="20" cy="38" r="3" fill="#fff"/>
-            <circle cx="30" cy="38" r="3" fill="#fff"/>
-            <circle cx="20.5" cy="38" r="1.5" fill="#000"/>
-            <circle cx="30.5" cy="38" r="1.5" fill="#000"/>
-            <!-- Nez -->
-            <ellipse cx="25" cy="45" rx="2" ry="1.5" fill="#fff"/>
+            
             <!-- Queue -->
-            <path d="M 80 45 Q 100 35 95 55 Q 90 65 80 60" fill="url(#otter-brown)"/>
+            <path d="M 75 40 Q 95 35 98 50 Q 95 58 75 50" fill="url(#otter-body)" stroke="#6B5030" stroke-width="1"/>
+            
+            <!-- Corps principal -->
+            <ellipse cx="50" cy="42" rx="28" ry="22" fill="url(#otter-body)"/>
+            
             <!-- Ventre -->
-            <ellipse cx="50" cy="55" rx="25" ry="15" fill="rgba(139, 111, 71, 0.7)"/>
+            <ellipse cx="50" cy="45" rx="20" ry="16" fill="url(#otter-belly)"/>
+            
+            <!-- Cou -->
+            <ellipse cx="30" cy="32" rx="16" ry="18" fill="url(#otter-body)"/>
+            
+            <!-- Tête -->
+            <circle cx="22" cy="22" r="14" fill="url(#otter-body)"/>
+            
+            <!-- Joues arrondies -->
+            <circle cx="18" cy="26" r="6" fill="url(#otter-belly)"/>
+            <circle cx="26" cy="26" r="6" fill="url(#otter-belly)"/>
+            
+            <!-- Museau -->
+            <ellipse cx="20" cy="30" rx="5" ry="4" fill="url(#otter-belly)"/>
+            
+            <!-- Nez -->
+            <ellipse cx="20" cy="30" rx="2.5" ry="2" fill="#4A3820"/>
+            
+            <!-- Yeux grands et expressifs -->
+            <circle cx="16" cy="18" r="3.5" fill="#fff"/>
+            <circle cx="26" cy="18" r="3.5" fill="#fff"/>
+            
+            <!-- Pupilles avec reflet -->
+            <circle cx="16.8" cy="18.5" r="1.8" fill="#1a1a1a"/>
+            <circle cx="26.8" cy="18.5" r="1.8" fill="#1a1a1a"/>
+            
+            <!-- Reflet des yeux -->
+            <circle cx="17.5" cy="17.5" r="1" fill="#fff"/>
+            <circle cx="27.5" cy="17.5" r="1" fill="#fff"/>
+            
+            <!-- Oreilles arrondies et mignonnes -->
+            <circle cx="12" cy="10" r="4.5" fill="url(#otter-body)"/>
+            <circle cx="30" cy="8" r="4.5" fill="url(#otter-body)"/>
+            
+            <!-- Intérieur des oreilles -->
+            <circle cx="12" cy="10" r="2.5" fill="#A0764A" opacity="0.8"/>
+            <circle cx="30" cy="8" r="2.5" fill="#A0764A" opacity="0.8"/>
+            
+            <!-- Moustaches -->
+            <line x1="15" y1="32" x2="10" y2="31" stroke="#6B5030" stroke-width="0.8" stroke-linecap="round"/>
+            <line x1="15" y1="33" x2="10" y2="34" stroke="#6B5030" stroke-width="0.8" stroke-linecap="round"/>
+            <line x1="25" y1="32" x2="30" y2="31" stroke="#6B5030" stroke-width="0.8" stroke-linecap="round"/>
+            <line x1="25" y1="33" x2="30" y2="34" stroke="#6B5030" stroke-width="0.8" stroke-linecap="round"/>
+            
+            <!-- Patte avant gauche -->
+            <ellipse cx="38" cy="55" rx="5" ry="7" fill="url(#otter-body)"/>
+            
+            <!-- Patte avant droite -->
+            <ellipse cx="55" cy="55" rx="5" ry="7" fill="url(#otter-body)"/>
+            
+            <!-- Orteils -->
+            <circle cx="36" cy="62" r="2" fill="#6B5030"/>
+            <circle cx="40" cy="62" r="2" fill="#6B5030"/>
+            <circle cx="53" cy="62" r="2" fill="#6B5030"/>
+            <circle cx="57" cy="62" r="2" fill="#6B5030"/>
         </svg>
     </div>
 
