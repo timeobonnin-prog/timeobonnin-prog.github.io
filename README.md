@@ -1,4 +1,4 @@
-Un portail pour la recupération d'url git (tunnel cloudfare) pour utilisation securisé de Birdnet-go avec erreur prise en charge
+Un portail pour la recupération d'url gist (tunnel cloudfare) pour utilisation securisé de Birdnet-go avec erreur prise en charge
 
 
 Voir lien : https://timeobonnin-prog.github.io
