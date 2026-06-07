@@ -393,7 +393,7 @@
                 fish.style.top = Math.random() * 100 + '%';
                 fish.style.animationDuration = (12 + Math.random() * 8) + 's';
                 fish.style.animationDelay = Math.random() * 4 + 's';
-                fish.innerHTML = `<svg viewBox="0 0 30 15" width="25" height="12"><path d="M2,7 C10,2 20,2 25,7 C20,12 10,12 2,7 Z" fill="rgba(56, 189, 248, 0.4)"/><path d="M24,7 L30,3 L29,11 Z" fill="rgba(56, 189, 248, 0.3)"/></svg>`;
+                fish.innerHTML = `<svg viewBox="0 0 30 15" width="25" height="12"><path d="M2,7 C10,2 20,2 25,7 C20,12 10,12 2,7 Z" fill="rgba(56, 189, 248, 0.4)"/><path d="M24,7 L30,3 L29,11 Z" [...]`;
                 fishLayer.appendChild(fish);
             }
         }
@@ -526,6 +526,201 @@
             initFishes();
             fetchDestination();
         });
+    </script>
+
+    <!-- Ajout : écume des berges + loutre - inséré automatiquement -->
+    <style>
+      /* Foam layer (bordures du lac) */
+      .foam-layer {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 4%;
+        height: 12%;
+        pointer-events: none;
+        z-index: 6; /* au-dessus des poissons (z-index:2), sous la carte (z-index:10+) */
+        overflow: visible;
+      }
+      .foam-piece {
+        position: absolute;
+        bottom: 0;
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.95), rgba(255,255,255,0.55) 40%, rgba(255,255,255,0.0) 60%);
+        filter: blur(0.6px);
+        opacity: 0.85;
+        transform: translateY(6px) scale(1);
+        animation: foam-bob 3.5s ease-in-out infinite;
+        mix-blend-mode: screen;
+      }
+      @keyframes foam-bob {
+        0% { transform: translateY(6px) scale(0.9); opacity: 0.7; }
+        50% { transform: translateY(-4px) scale(1.05); opacity: 1; }
+        100% { transform: translateY(6px) scale(0.95); opacity: 0.7; }
+      }
+
+      /* Slight clusters for shoreline look */
+      .foam-cluster { position: absolute; bottom: 0; pointer-events: none; }
+
+      /* Otter (loutre) */
+      .otter-container {
+        position: absolute;
+        left: 22px;
+        bottom: 6%;
+        width: 110px;
+        height: 70px;
+        z-index: 22; /* au-dessus des poissons, sous la carte */
+        pointer-events: auto;
+        cursor: pointer;
+        transform-origin: center bottom;
+        transition: transform 0.2s ease;
+      }
+      .otter-svg { width: 100%; height: 100%; display: block; }
+      .otter-bob { animation: otter-bob 4.2s ease-in-out infinite; transform-origin: center center; }
+      @keyframes otter-bob {
+        0% { transform: translateY(0) rotate(-1deg); }
+        50% { transform: translateY(-6px) rotate(1.2deg); }
+        100% { transform: translateY(0) rotate(-1deg); }
+      }
+
+      /* Otter swim/dive action */
+      .otter-container.swim {
+        animation: otter-swim 2.2s cubic-bezier(.2,.9,.3,1) forwards;
+      }
+      @keyframes otter-swim {
+        0% { transform: translateX(0) translateY(0) rotate(0deg); opacity: 1; }
+        30% { transform: translateX(140px) translateY(-48px) rotate(-12deg) scale(0.95); }
+        60% { transform: translateX(220px) translateY(-30px) rotate(6deg) scale(0.9); opacity: 0.9; }
+        100% { transform: translateX(0) translateY(0) rotate(0deg); opacity: 1; }
+      }
+
+      /* Small accessible helper */
+      .sr-only { position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+    </style>
+
+    <div class="foam-layer" id="foamLayer" aria-hidden="true"></div>
+
+    <div class="otter-container" id="otter" role="button" aria-label="Loutre du lac - cliquer pour qu'elle nage">
+      <svg class="otter-svg" viewBox="0 0 220 140" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <!-- simple silhouette stylisée d'une loutre -->
+        <g class="otter-bob" fill="none" stroke="none">
+          <!-- corps -->
+          <ellipse cx="110" cy="82" rx="58" ry="28" fill="#6B3F26"/>
+          <!-- tête -->
+          <ellipse cx="66" cy="68" rx="28" ry="22" fill="#6B3F26"/>
+          <!-- ventre plus clair -->
+          <ellipse cx="110" cy="88" rx="36" ry="16" fill="#8f5f3f"/>
+          <!-- oreille -->
+          <circle cx="50" cy="54" r="5" fill="#5b3723"/>
+          <!-- oeil -->
+          <circle cx="74" cy="66" r="3" fill="#0b1720"/>
+          <!-- nez -->
+          <circle cx="56" cy="74" r="3" fill="#0b1720"/>
+          <!-- queue stylisée -->
+          <path d="M164 92 C186 92 202 80 212 68 L206 84 C196 94 176 102 164 92 Z" fill="#6B3F26"/>
+          <!-- reflets légers -->
+          <path d="M92 80 C100 74 116 74 126 80" stroke="rgba(255,255,255,0.06)" stroke-width="2" fill="none" stroke-linecap="round"/>
+        </g>
+      </svg>
+    </div>
+
+    <span class="sr-only" id="otterStatus" aria-live="polite"></span>
+
+    <script>
+      (function () {
+        const foamLayer = document.getElementById('foamLayer');
+        const otter = document.getElementById('otter');
+        const otterStatus = document.getElementById('otterStatus');
+
+        function randomBetween(min, max) { return Math.random() * (max - min) + min; }
+
+        function createFoamPieces() {
+          if (!foamLayer) return;
+          foamLayer.innerHTML = '';
+
+          // clusters near left and right banks
+          const clusters = [
+            { anchor: 'left', count: 16, spreadVw: 16, offset: 2 },
+            { anchor: 'right', count: 14, spreadVw: 16, offset: 2 }
+          ];
+
+          clusters.forEach(cluster => {
+            const clusterEl = document.createElement('div');
+            clusterEl.className = 'foam-cluster';
+            // position cluster container
+            if (cluster.anchor === 'left') {
+              clusterEl.style.left = `${cluster.offset}px`;
+            } else {
+              clusterEl.style.right = `${cluster.offset}px`;
+            }
+            clusterEl.style.bottom = '0';
+            clusterEl.style.width = `${cluster.spreadVw}vw`;
+            clusterEl.style.height = '60px';
+            clusterEl.style.pointerEvents = 'none';
+            clusterEl.style.overflow = 'visible';
+
+            for (let i = 0; i < cluster.count; i++) {
+              const p = document.createElement('div');
+              p.className = 'foam-piece';
+              const size = Math.round(randomBetween(6, 18));
+              p.style.width = size + 'px';
+              p.style.height = size + 'px';
+              // position inside cluster (x)
+              const x = Math.round(randomBetween(0, cluster.spreadVw));
+              p.style.left = cluster.anchor === 'left' ? `${x}px` : `calc(100% - ${x}px)`;
+              // slight individual timing
+              p.style.animationDuration = `${randomBetween(2.6, 5.2)}s`;
+              p.style.animationDelay = `${randomBetween(0, 2)}s`;
+              p.style.opacity = `${randomBetween(0.5, 1)}`;
+              clusterEl.appendChild(p);
+            }
+
+            foamLayer.appendChild(clusterEl);
+          });
+        }
+
+        // occasional subtle refresh so foam doesn't look too repetitive
+        function scheduleFoamRefresh() {
+          createFoamPieces();
+          setTimeout(scheduleFoamRefresh, 7000 + Math.random() * 8000);
+        }
+
+        // otter interactions
+        let otterBusy = false;
+        function otterSwimAction() {
+          if (otterBusy) return;
+          otterBusy = true;
+          otter.classList.add('swim');
+          otterStatus.textContent = 'La loutre file sur l\'eau.';
+          setTimeout(() => {
+            otter.classList.remove('swim');
+            otterStatus.textContent = 'La loutre se repose.';
+            otterBusy = false;
+          }, 2200);
+        }
+
+        // click or touch triggers swim
+        otter.addEventListener('click', (e) => {
+          e.stopPropagation();
+          otterSwimAction();
+        });
+        otter.addEventListener('touchstart', (e) => {
+          e.stopPropagation();
+          otterSwimAction();
+        }, {passive: true});
+
+        // init on DOM ready
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', () => {
+            createFoamPieces();
+            scheduleFoamRefresh();
+          });
+        } else {
+          createFoamPieces();
+          scheduleFoamRefresh();
+        }
+      })();
     </script>
 </body>
 </html>
