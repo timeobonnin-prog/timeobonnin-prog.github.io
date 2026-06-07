@@ -17,4 +17,4 @@ Vous pouvez contribuez au depot en demandant le niveau contributeur
 
 
 
-Merci à touts les contributeurs pour leurs aides apporter au dépot 
+Merci à touts les contributeurs pour leurs aides et leur bienveillance
