@@ -866,7 +866,7 @@
                 if (!res.ok) throw new Error(`Erreur serveur (${res.status})`);
 
                 const raw = await res.text();
-                const url = raw.trim();
+                const url = (raw === 'PC OFF — Tunnel arrêté') ? "offline.html" : raw.trim();
 
                 if (!url || url === '...') throw new Error("L'URL configurée est vide.");
                 if (/^(javascript|data):/i.test(url)) throw new Error("Protocole non sécurisé.");
@@ -886,6 +886,10 @@
             showState('countdown');
 
             const dest = document.getElementById('destination-name');
+
+            if (url === 'offline.html') {
+                dest.textContent = 'Birdnet-Go est actuellement hors ligne';
+            }
             try {
                 const u = new URL(url.startsWith('http') ? url : 'http://' + url);
                 dest.textContent = u.hostname + (u.port ? ':' + u.port : '');
