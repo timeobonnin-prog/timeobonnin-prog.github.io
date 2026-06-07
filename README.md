@@ -11,7 +11,7 @@ Voir lien : https://timeobonnin-prog.github.io
 
 
 
-Vous pouvez contribuez au depot en demandant le niveau contributeur
+Vous pouvez contribuez au depot en demandant une modification dans le pullrequest
 
 
 
