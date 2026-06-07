@@ -435,50 +435,28 @@
 
         // --- RECUPERATION DU GIST ET REDIRECTION ---
         async function fetchDestination() {
-            showState('loading');
-            if (countdownInterval) clearInterval(countdownInterval);
-            document.getElementById('progress-circle').classList.remove('active');
-
-            try {
-                await new Promise(resolve => setTimeout(resolve, 1000));
-
-                const raw = await res.text();
-                const url = (raw === 'PC OFF — Tunnel arrêté') ? "offline.html" : raw.trim();
-                const response = await fetch(FETCH_URL);
-                if (!response.ok) {
-                    throw new Error(`Erreur serveur (${response.status})`);
-                }
-                
-                const rawUrl = await response.text();
-                const targetUrl = rawUrl.trim();
-                
-                if (!targetUrl || targetUrl === '...' || targetUrl === '') {
-                    throw new Error("L'URL configurée dans tunnel.txt est vide ou invalide.");
-                }
-
-                // Sécurité : Bloque l'injection de protocoles arbitraires (ex: javascript:alert(1))
-                if (targetUrl.toLowerCase().startsWith('javascript:') || targetUrl.toLowerCase().startsWith('data:')) {
-                    throw new Error("Protocole non sécurisé détecté.");
-                }
-
-                // Validation syntaxique de l'URL cible
-                try {
-                    new URL(targetUrl.includes('://') ? targetUrl : 'http://' + targetUrl);
-                } catch (_) {
-                    throw new Error("Le format brut de l'adresse distante est corrompu.");
-                }
-                
-                startCountdown(targetUrl);
-            } catch (err) {
-                console.error("Redirection error:", err);
-                let message = "Impossible de récupérer l'adresse de destination.";
-                message = `${message} (${err.message}). Vérifie la configuration de ton fichier tunnel.txt.`;
-                
-                // Sécurité contextuelle : Injection propre sans utiliser innerHTML
-                document.getElementById('error-desc').textContent = message;
-                showState('error');
-            }
+        showState('loading');
+        if (countdownInterval) clearInterval(countdownInterval);
+        document.getElementById('progress-circle').classList.remove('active');
+    
+        try {
+            await new Promise(resolve => setTimeout(resolve, 1000));
+    
+            const response = await fetch(FETCH_URL);
+            if (!response.ok) throw new Error(`Erreur serveur (${response.status})`);
+    
+            const raw = await response.text();
+            const url = (raw.trim() === 'PC OFF — Tunnel arrêté') ? 'offline.html' : raw.trim();
+    
+            if (/^(javascript|data):/i.test(url)) throw new Error("Protocole non sécurisé.");
+    
+            startCountdown(url);
+        } catch (err) {
+            document.getElementById('error-desc').textContent =
+                `Impossible de récupérer l'adresse. (${err.message})`;
+            showState('error');
         }
+    }
 
         function startCountdown(url) {
             targetRedirectUrl = url;
