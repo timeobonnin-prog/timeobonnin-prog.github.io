@@ -7,7 +7,7 @@
     <title>Birdnet-Go — Le Lac</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700&family=Plus+Jakarta+Sans:wght@300;400;600&display=swap" rel="stylesheet">
     
     <style>
         html { display: none; }
@@ -22,14 +22,14 @@
 
     <style>
         :root {
-            --ink: #020617;
-            --lake: #0f172a;
-            --surface: rgba(255, 255, 255, 0.03);
-            --border: rgba(255, 255, 255, 0.06);
-            --text: #e2e8f0;
-            --muted: #94a3b8;
-            --accent: #5eead4;
-            --error: #ef4444;
+            --primary-glow: #0ea5e9; 
+            --secondary-glow: #38bdf8;
+            --bg-color: #031e30;
+            --card-bg: rgba(3, 30, 48, 0.45);
+            --border-color: rgba(255, 255, 255, 0.06);
+            --text-primary: #f0f9ff;
+            --text-secondary: #7dd3fc;
+            --error-color: #ef4444;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -39,844 +39,443 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            background: radial-gradient(ellipse at 50% 20%, #1e293b 0%, #020617 60%);
-            font-family: "Inter", sans-serif;
-            color: var(--text);
+            background: radial-gradient(circle at 50% 30%, #0c2d48 0%, #02111a 100%);
+            font-family: "Plus Jakarta Sans", sans-serif;
+            color: var(--text-primary);
             overflow: hidden;
             position: relative;
         }
 
-        /* --- SCÈNE MINIMALISTE --- */
-        .scene {
+        /* --- EFFETS AMBIANTS DU LAC --- */
+        .ambient-layer {
             position: absolute;
             inset: 0;
             z-index: 1;
             pointer-events: none;
         }
-
-        /* Ciel */
-        .stars {
-            position: absolute;
-            inset: 0;
-        }
-        .star {
-            position: absolute;
-            width: 2px;
-            height: 2px;
-            background: #fff;
-            border-radius: 50%;
-            opacity: 0.3;
-            animation: twinkle 4s ease-in-out infinite;
-        }
-        @keyframes twinkle {
-            0%, 100% { opacity: 0.2; transform: scale(1); }
-            50% { opacity: 0.6; transform: scale(1.4); }
-        }
-
-        /* Lune & halo */
-        .moon {
-            position: absolute;
-            top: 10%;
-            left: 14%;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background: #f8fafc;
-            opacity: 0.95;
-            box-shadow: 0 0 60px rgba(248, 250, 252, 0.25), 0 0 120px rgba(248, 250, 252, 0.12);
-            z-index: 2;
-        }
-        .moon-glow {
-            position: absolute;
-            top: 10%;
-            left: 14%;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background: rgba(248, 250, 252, 0.15);
-            transform: translate(0, 0) scale(2.8);
-            filter: blur(20px);
-            z-index: 1;
-        }
-        .moon-reflection {
-            position: absolute;
-            top: 10%;
-            left: 14%;
-            width: 36px;
-            height: 140px;
-            background: linear-gradient(to bottom, rgba(248,250,252,0.08), transparent);
-            transform: translateY(36px);
-            filter: blur(10px);
-            animation: reflection-pulse 5s ease-in-out infinite;
-        }
-        @keyframes reflection-pulse {
-            0%, 100% { opacity: 0.4; transform: translateY(36px) scaleX(1); }
-            50% { opacity: 0.8; transform: translateY(36px) scaleX(1.3); }
-        }
-
-        /* Horizon & Eau */
-        .horizon {
-            position: absolute;
-            bottom: 22%;
-            left: 0;
-            width: 100%;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(148,163,184,0.15), transparent);
-        }
-
-        .water {
+        
+        .evaporation {
             position: absolute;
             bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 22%;
-            background: linear-gradient(to bottom, rgba(15,23,42,0.2), rgba(2,6,23,0.6));
-            overflow: hidden;
-        }
-        .water::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(90deg, transparent 0%, rgba(94,234,212,0.03) 50%, transparent 100%);
-            animation: wave-slide 10s ease-in-out infinite;
-        }
-        @keyframes wave-slide {
-            0%, 100% { transform: translateX(-30%); }
-            50% { transform: translateX(30%); }
+            width: 1.5px;
+            height: 1.5px;
+            background: rgba(56, 189, 248, 0.2);
+            border-radius: 50%;
+            animation: rise linear infinite;
         }
 
-        .water-ripple {
+        @keyframes rise {
+            0% { transform: translateY(10vh) scale(1); opacity: 0; }
+            50% { opacity: 0.4; }
+            100% { transform: translateY(-110vh) scale(2); opacity: 0; }
+        }
+
+        .drop-rain {
             position: absolute;
-            bottom: 20%;
-            left: 50%;
+            width: 1px;
+            height: 15px;
+            background: linear-gradient(to bottom, transparent, rgba(56, 189, 248, 0.3));
+            animation: fall linear infinite;
+        }
+
+        @keyframes fall {
+            0% { transform: translateY(-10vh); }
+            100% { transform: translateY(110vh); }
+        }
+
+        /* --- PERCHE --- */
+        .perch-line {
+            position: absolute;
+            top: 180px;
+            right: 0;
             width: 200px;
-            height: 6px;
-            border-radius: 50%;
-            border: 1px solid rgba(94,234,212,0.08);
-            animation: ripple 6s ease-out infinite;
-            transform: translateX(-50%);
-        }
-        @keyframes ripple {
-            0% { width: 0; opacity: 0.5; }
-            100% { width: 300px; opacity: 0; }
-        }
-
-        /* Écailles scintillantes */
-        .water-scales {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 22%;
-            z-index: 2;
+            height: 1px;
+            background: linear-gradient(to left, rgba(255,255,255,0.15), transparent);
+            z-index: 5;
             pointer-events: none;
         }
-        .scale {
+
+        /* --- MARTIN-PÊCHEUR --- */
+        .kingfisher-container {
             position: absolute;
-            width: 3px;
-            height: 2px;
-            border-radius: 50%;
-            background: rgba(148, 200, 220, 0.15);
-            animation: scale-twinkle 3s ease-in-out infinite;
-        }
-        @keyframes scale-twinkle {
-            0%, 100% { opacity: 0.1; transform: scale(1); }
-            50% { opacity: 0.5; transform: scale(1.6); }
+            top: 112px;
+            right: 40px;
+            width: 90px;
+            height: 90px;
+            z-index: 30;
+            cursor: pointer;
+            transform: scaleX(-1);
+            animation: gentle-breath 4s ease-in-out infinite;
+            transition: transform 0.2s;
+            pointer-events: auto;
         }
 
-        /* Brume basse */
-        .mist {
+        @keyframes gentle-breath {
+            0%, 100% { transform: scaleX(-1) translateY(0); }
+            50% { transform: scaleX(-1) translateY(-3px); }
+        }
+
+        .kingfisher-container.diving {
+            animation: dive-action 1.8s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+        }
+
+        @keyframes dive-action {
+            0% { transform: scaleX(-1) translate(0, 0) rotate(0deg); }
+            25% { transform: scaleX(-1) translate(-140px, 320px) rotate(-55deg) scale(0.9); }
+            45% { transform: scaleX(-1) translate(-160px, 330px) rotate(-20deg) scale(0.9); }
+            100% { transform: scaleX(-1) translate(0, 0) rotate(0deg); }
+        }
+
+        /* --- POISSONS --- */
+        .fish-layer {
             position: absolute;
-            bottom: 0;
+            bottom: 6%;
             width: 100%;
-            height: 30%;
-            background: radial-gradient(ellipse at 50% 100%, rgba(148,163,184,0.04) 0%, transparent 70%);
-            animation: mist-breathe 12s ease-in-out infinite;
+            height: 15%;
+            z-index: 2;
+            pointer-events: none;
+            opacity: 0.25;
         }
-        @keyframes mist-breathe {
-            0%, 100% { opacity: 0.3; }
-            50% { opacity: 0.6; }
-        }
-
-        /* Poissons nageurs */
         .fish {
             position: absolute;
-            bottom: 8%;
-            opacity: 0.25;
-            animation: swim 18s linear infinite;
-            z-index: 2;
+            animation: swim linear infinite;
         }
         @keyframes swim {
-            0% { transform: translateX(-60px) scaleX(-1); }
+            0% { transform: translateX(-50px) scaleX(-1); }
             100% { transform: translateX(110vw) scaleX(-1); }
         }
 
-        /* Poisson sauteur */
-        .jumper {
-            position: absolute;
-            left: 55%;
-            bottom: 10%;
-            width: 24px;
-            height: 12px;
-            opacity: 0;
-            z-index: 3;
-            animation: jump-cycle 7s ease-in infinite;
-            animation-delay: 2s;
-        }
-        .jumper svg {
-            width: 100%;
-            height: 100%;
-        }
-        @keyframes jump-cycle {
-            0%, 70%, 100% { transform: translateY(0) rotate(0deg); opacity: 0; }
-            75% { opacity: 0.6; transform: translateY(-70px) rotate(-35deg) translateX(-20px); }
-            85% { transform: translateY(-30px) rotate(10deg) translateX(-10px); opacity: 0.4; }
-            90% { transform: translateY(0) rotate(0deg); opacity: 0; }
-        }
-
-        .splash {
-            position: absolute;
-            left: 55%;
-            bottom: 10%;
-            width: 40px;
-            height: 20px;
-            transform: translateX(-50%);
-            z-index: 2;
-        }
-        .splash-ring {
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            border: 1px solid rgba(94,234,212,0.2);
-            border-radius: 50%;
-            transform: translateX(-50%) scale(0);
-            opacity: 0;
-        }
-        .splash-ring:nth-child(1) { animation: splash-out 7s ease-out infinite 2s; }
-        .splash-ring:nth-child(2) { animation: splash-out 7s ease-out infinite 2s; animation-delay: 2.15s; }
-        .splash-ring:nth-child(3) { animation: splash-out 7s ease-out infinite 2s; animation-delay: 2.3s; }
-        @keyframes splash-out {
-            0%, 90%, 100% { transform: translateX(-50%) scale(0); opacity: 0; }
-            92% { opacity: 0.5; }
-            100% { transform: translateX(-50%) scale(2.5); opacity: 0; width: 40px; height: 10px; }
-        }
-
-        /* Nénuphar + grenouille + œufs */
-        .lily-cluster {
-            position: absolute;
-            bottom: 6%;
-            left: 18%;
-            z-index: 3;
-            animation: bob 6s ease-in-out infinite;
-        }
-        @keyframes bob {
-            0%, 100% { transform: translateY(0) rotate(0deg); }
-            50% { transform: translateY(-3px) rotate(2deg); }
-        }
-        .lily-pad {
-            width: 48px;
-            height: 30px;
-            background: rgba(40, 90, 60, 0.35);
-            border-radius: 50%;
-            position: relative;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-        }
-        .lily-notch {
-            position: absolute;
-            top: 50%;
-            right: -2px;
-            width: 10px;
-            height: 10px;
-            background: radial-gradient(circle at 0 0, transparent 6px, rgba(40,90,60,0.35) 6px);
-            transform: rotate(-20deg);
-        }
-        .frog {
-            position: absolute;
-            bottom: 14px;
-            left: 14px;
-            width: 16px;
-            height: 10px;
-        }
-        .frog-body {
-            width: 14px;
-            height: 8px;
-            background: rgba(60, 130, 70, 0.6);
-            border-radius: 6px 6px 8px 8px;
-            position: relative;
-        }
-        .frog-eye {
-            position: absolute;
-            top: -2px;
-            width: 3px;
-            height: 3px;
-            background: rgba(20, 60, 30, 0.7);
-            border-radius: 50%;
-            animation: blink 4s ease-in-out infinite;
-        }
-        .frog-eye.left { left: 2px; }
-        .frog-eye.right { left: 9px; }
-        @keyframes blink {
-            0%, 96%, 100% { transform: scaleY(1); }
-            98% { transform: scaleY(0.1); }
-        }
-
-        .eggs {
-            position: absolute;
-            bottom: 2px;
-            left: -10px;
-            width: 20px;
-            height: 8px;
-        }
-        .egg-cluster {
-            position: absolute;
-            width: 3px;
-            height: 2.5px;
-            background: rgba(180, 230, 190, 0.25);
-            border-radius: 50%;
-            animation: egg-float 5s ease-in-out infinite;
-        }
-        @keyframes egg-float {
-            0%, 100% { transform: translateY(0); opacity: 0.3; }
-            50% { transform: translateY(-1px); opacity: 0.6; }
-        }
-
-        /* Grenouille de berge */
-        .bank-frog {
-            position: absolute;
-            bottom: 16%;
-            left: 6%;
-            z-index: 3;
-            animation: bank-breathe 5s ease-in-out infinite;
-        }
-        @keyframes bank-breathe {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-2px); }
-        }
-        .bank-frog svg {
-            width: 28px;
-            height: 20px;
-            opacity: 0.55;
-        }
-
-        /* Perch & Martin-pêcheur */
-        .perch-line {
-            position: absolute;
-            top: 190px;
-            right: 0;
-            width: 160px;
-            height: 1px;
-            background: linear-gradient(to left, rgba(226,232,240,0.1), transparent);
-            z-index: 5;
-        }
-
-        .kingfisher {
-            position: absolute;
-            top: 155px;
-            right: 50px;
-            width: 70px;
-            height: 70px;
-            z-index: 10;
-            cursor: pointer;
-            transform: scaleX(-1);
-            animation: breathe 5s ease-in-out infinite;
-            transition: transform 0.3s ease;
-            pointer-events: auto;
-        }
-        @keyframes breathe {
-            0%, 100% { transform: scaleX(-1) translateY(0); }
-            50% { transform: scaleX(-1) translateY(-2px); }
-        }
-        .kingfisher.diving {
-            animation: dive 2s cubic-bezier(0.25, 1, 0.5, 1) forwards;
-        }
-        @keyframes dive {
-            0% { transform: scaleX(-1) translate(0,0) rotate(0); }
-            30% { transform: scaleX(-1) translate(-120px, 300px) rotate(-50deg) scale(0.9); }
-            50% { transform: scaleX(-1) translate(-140px, 310px) rotate(-20deg) scale(0.9); }
-            100% { transform: scaleX(-1) translate(0,0) rotate(0); }
-        }
-
-        /* Particules */
-        .particle {
-            position: absolute;
-            width: 2px;
-            height: 2px;
-            background: rgba(226,232,240,0.25);
-            border-radius: 50%;
-            animation: float 10s linear infinite;
-        }
-        @keyframes float {
-            0% { transform: translateY(10vh) translateX(0); opacity: 0; }
-            30% { opacity: 0.4; }
-            100% { transform: translateY(-110vh) translateX(20px); opacity: 0; }
-        }
-
-        /* Rêverbe ambient */
-        .glow {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 600px;
-            height: 600px;
-            background: radial-gradient(circle, rgba(94,234,212,0.03) 0%, transparent 70%);
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        /* --- INTERFACE --- */
+        /* --- INTERFACE CARD --- */
         .container {
             position: relative;
-            z-index: 20;
+            z-index: 10;
             width: 100%;
             display: flex;
             justify-content: center;
-            padding: 24px;
+            padding: 20px;
             pointer-events: none;
         }
 
-        .card {
+        .redirect-card {
             width: 100%;
-            max-width: 360px;
-            padding: 40px 32px;
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 28px;
-            backdrop-filter: blur(24px);
-            -webkit-backdrop-filter: blur(24px);
+            max-width: 380px;
+            padding: 45px 35px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 32px;
+            box-shadow: 0 30px 70px rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             text-align: center;
             display: flex;
             flex-direction: column;
             align-items: center;
-            animation: enter 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            animation: card-appear 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
             pointer-events: auto;
         }
-        @keyframes enter {
-            from { opacity: 0; transform: translateY(16px) scale(0.98); }
-            to { opacity: 1; transform: translateY(0) scale(1); }
+
+        @keyframes card-appear {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        .logo {
-            width: 56px;
-            height: 56px;
-            border-radius: 16px;
-            background: rgba(94, 234, 212, 0.06);
-            border: 1px solid rgba(94, 234, 212, 0.12);
-            color: var(--accent);
-            margin-bottom: 22px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        .logo-wrapper {
+            width: 64px; height: 64px;
+            border-radius: 18px;
+            background: rgba(14, 165, 233, 0.08);
+            border: 1px solid rgba(14, 165, 233, 0.2);
+            color: var(--secondary-glow);
+            margin-bottom: 24px;
+            display: flex; align-items: center; justify-content: center;
         }
 
         h1 {
             font-family: "Outfit", sans-serif;
-            font-size: 1.5rem;
+            font-size: 1.6rem;
             font-weight: 500;
             letter-spacing: -0.5px;
-            margin-bottom: 6px;
+            margin-bottom: 8px;
             color: #fff;
         }
 
-        .subtitle {
-            font-size: 0.8rem;
-            color: var(--muted);
-            margin-bottom: 20px;
-            font-weight: 300;
-        }
-
-        .state { display: none; width: 100%; flex-direction: column; align-items: center; }
-        .state.active { display: flex; }
+        .state-container { display: none; width: 100%; flex-direction: column; align-items: center; }
+        .state-container.active { display: flex; }
 
         .spinner {
-            width: 28px;
-            height: 28px;
-            border: 2px solid rgba(255,255,255,0.04);
-            border-top-color: var(--accent);
+            width: 32px; height: 32px;
+            border: 2px solid rgba(255,255,255,0.05);
+            border-top-color: var(--secondary-glow);
             border-radius: 50%;
-            margin: 32px 0;
-            animation: spin 0.9s linear infinite;
+            margin: 40px 0;
+            animation: spin 0.8s linear infinite;
         }
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        .status {
-            color: var(--muted);
-            font-size: 0.8rem;
-            font-weight: 300;
-        }
+        .subtitle { font-size: 0.85rem; color: #64748b; margin-bottom: 12px; font-weight: 400; }
+        .status-text { color: #64748b; font-size: 0.85rem; }
 
-        .badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 7px 14px;
-            background: rgba(255,255,255,0.03);
-            border: 1px solid rgba(255,255,255,0.06);
-            border-radius: 100px;
-            margin-bottom: 24px;
-            color: var(--accent);
-            font-size: 0.78rem;
-            font-weight: 500;
-            cursor: pointer;
+        .destination-badge {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 8px 16px; background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 100px;
+            margin-bottom: 28px; color: var(--text-secondary); font-size: 0.8rem;
+            text-decoration: none; font-weight: 500; cursor: pointer;
             transition: all 0.2s;
-            font-family: "Inter", sans-serif;
         }
-        .badge:hover {
-            background: rgba(255,255,255,0.06);
-            border-color: rgba(94,234,212,0.15);
+        .destination-badge:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(56, 189, 248, 0.3);
         }
-        .badge .check { display: none; stroke: #34d399; }
-        .badge.copied .copy-icon { display: none; }
-        .badge.copied .check { display: inline; }
+        
+        .copy-icon-wrapper { display: flex; align-items: center; }
+        .check-icon { display: none; stroke: #10b981; }
+        .destination-badge.copied .copy-icon { display: none; }
+        .destination-badge.copied .check-icon { display: inline; }
 
-        .wheel {
-            position: relative;
-            width: 80px;
-            height: 80px;
-            margin-bottom: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .wheel svg circle:first-child { stroke: rgba(255,255,255,0.04); }
-        .wheel .progress {
-            stroke-dasharray: 88.0;
-            stroke-dashoffset: 0;
-            transform: rotate(-90deg);
-            transform-origin: center;
-            transition: stroke-dashoffset 1s linear;
-        }
-        .wheel .progress.active { animation: countdown 8s linear forwards; }
-        @keyframes countdown { to { stroke-dashoffset: 88.0; } }
-        .wheel .num {
-            position: absolute;
-            font-size: 1.8rem;
-            font-weight: 400;
-            color: #fff;
-            font-family: "Outfit", sans-serif;
-        }
+        .countdown-wheel { position: relative; width: 90px; height: 90px; margin-bottom: 16px; display: flex; align-items: center; justify-content: center; }
+        .circle-progress { stroke-dasharray: 100.53; stroke-dashoffset: 0; transform: rotate(-90deg); transform-origin: center; }
+        .circle-progress.active { animation: countdown-circle 8s linear forwards; }
+        @keyframes countdown-circle { from { stroke-dashoffset: 0; } to { stroke-dashoffset: 100.53; } }
+        .countdown-number { position: absolute; font-size: 2.2rem; font-weight: 500; color: #fff; font-family: "Outfit", sans-serif; }
+        .countdown-caption { font-size: 0.8rem; color: #64748b; margin-bottom: 24px; }
 
-        .caption {
-            font-size: 0.75rem;
-            color: var(--muted);
-            margin-bottom: 20px;
-            font-weight: 300;
+        .action-btn {
+            width: 100%; padding: 14px; border-radius: 14px;
+            font-size: 0.9rem; font-weight: 600; text-decoration: none; border: none; cursor: pointer; transition: 0.2s;
+            background: #fff; color: #02111a; text-align: center;
+            display: inline-flex; align-items: center; justify-content: center; gap: 8px;
         }
+        .action-btn:hover { background: #e2e8f0; transform: translateY(-1px); }
 
-        .btn {
-            width: 100%;
-            padding: 13px;
-            border-radius: 12px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            text-decoration: none;
-            border: none;
-            cursor: pointer;
-            transition: 0.2s;
-            background: rgba(255,255,255,0.92);
-            color: #020617;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
+        .error-icon-wrapper {
+            color: var(--error-color);
+            margin: 20px 0 15px 0;
         }
-        .btn:hover {
-            background: #fff;
-            transform: translateY(-1px);
-        }
-        .btn.retry {
-            background: rgba(239,68,68,0.08);
-            color: #f87171;
-            border: 1px solid rgba(239,68,68,0.15);
-        }
-        .btn.retry:hover {
-            background: rgba(239,68,68,0.14);
-            color: #fff;
-        }
-
-        .error-icon {
-            color: var(--error);
-            margin: 16px 0 10px;
-        }
-        .error-title {
-            font-size: 1.1rem;
-            color: var(--error);
-            font-weight: 600;
-            margin-bottom: 6px;
-        }
-        .error-desc {
-            color: var(--muted);
-            font-size: 0.8rem;
-            line-height: 1.4;
-            margin-bottom: 18px;
-            font-weight: 300;
-        }
+        .error-title { font-size: 1.2rem; color: var(--error-color); font-weight: 600; margin-bottom: 8px; }
+        .error-message { color: #64748b; font-size: 0.85rem; line-height: 1.4; margin-bottom: 20px; }
+        .retry-btn { background: rgba(239, 68, 68, 0.1); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.2); }
+        .retry-btn:hover { background: rgba(239, 68, 68, 0.2); color: #fff; }
     </style>
 </head>
 <body>
 
-    <div class="scene">
-        <div class="glow"></div>
-        <div class="stars" id="stars"></div>
-        
-        <div class="moon-glow"></div>
-        <div class="moon"></div>
-        <div class="moon-reflection"></div>
-        
-        <div class="horizon"></div>
-        
-        <div class="water">
-            <div class="water-ripple" style="animation-delay: 0s;"></div>
-            <div class="water-ripple" style="animation-delay: 3s; bottom: 18%; left: 30%;"></div>
-        </div>
-
-        <div class="water-scales" id="scales"></div>
-        
-        <div class="mist"></div>
-        <div id="fishLayer"></div>
-        <div id="particleLayer"></div>
-
-        <!-- Poisson sauteur -->
-        <div class="jumper">
-            <svg viewBox="0 0 28 12" width="100%" height="100%">
-                <path d="M2,6 C10,2 20,2 24,6 C20,10 10,10 2,6 Z" fill="rgba(94,234,212,0.35)"/>
-                <path d="M24,6 L28,3 L27,9 Z" fill="rgba(94,234,212,0.25)"/>
-            </svg>
-        </div>
-        <div class="splash">
-            <div class="splash-ring" style="width: 10px; height: 4px;"></div>
-            <div class="splash-ring" style="width: 20px; height: 8px;"></div>
-            <div class="splash-ring" style="width: 30px; height: 12px;"></div>
-        </div>
-
-        <!-- Nénuphar avec grenouille et œufs -->
-        <div class="lily-cluster">
-            <div class="lily-pad">
-                <div class="lily-notch"></div>
-                <div class="frog">
-                    <div class="frog-body">
-                        <div class="frog-eye left"></div>
-                        <div class="frog-eye right"></div>
-                    </div>
-                </div>
-            </div>
-            <div class="eggs" id="eggs"></div>
-        </div>
-
-        <!-- Grenouille de berge -->
-        <div class="bank-frog">
-            <svg viewBox="0 0 28 20" width="100%" height="100%">
-                <ellipse cx="20" cy="14" rx="8" ry="5" fill="rgba(50,120,60,0.5)"/>
-                <circle cx="14" cy="10" r="6" fill="rgba(50,120,60,0.55)"/>
-                <circle cx="12" cy="8" r="1.5" fill="#0f172a"/>
-                <circle cx="18" cy="8" r="1.5" fill="#0f172a"/>
-                <ellipse cx="10" cy="16" rx="3" ry="2" fill="rgba(40,100,50,0.45)"/>
-                <ellipse cx="24" cy="16" rx="3" ry="2" fill="rgba(40,100,50,0.45)"/>
-            </svg>
-        </div>
-    </div>
-
     <div class="perch-line"></div>
 
-    <div class="kingfisher" id="kingfisher" title="Cliquez pour plonger">
+    <div class="kingfisher-container" id="kingfisher">
         <svg viewBox="0 0 120 120" width="100%" height="100%">
             <defs>
-                <linearGradient id="kfb" x1="0" y1="0" x2="1" y2="1">
-                    <stop offset="0%" stop-color="#0ea5e9"/>
-                    <stop offset="100%" stop-color="#0f172a"/>
+                <linearGradient id="feather-blue" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#00e5ff"/>
+                    <stop offset="100%" stop-color="#0066cc"/>
                 </linearGradient>
-                <linearGradient id="kfo" x1="0" y1="0" x2="1" y2="1">
-                    <stop offset="0%" stop-color="#f59e0b"/>
-                    <stop offset="100%" stop-color="#7c2d12"/>
+                <linearGradient id="belly-orange" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#ff9100"/>
+                    <stop offset="100%" stop-color="#d84315"/>
                 </linearGradient>
             </defs>
-            <path d="M50,42 C64,42 74,56 72,80 C70,90 62,98 52,98 C44,88 43,68 50,42 Z" fill="url(#kfo)"/>
-            <path d="M46,26 C60,26 64,34 63,44 C56,56 48,70 46,94 L39,96 L37,84 C34,64 36,41 46,26 Z" fill="url(#kfb)"/>
-            <path d="M46,26 C57,26 63,33 62,42 C55,40 50,35 46,26 Z" fill="#38bdf8"/>
-            <path d="M60,38 L100,42 L59,44 Z" fill="#1e293b"/>
-            <circle cx="54" cy="35" r="2" fill="#fff"/>
-            <circle cx="54" cy="35" r="0.9" fill="#0f172a"/>
+            <path d="M52,45 C65,45 76,58 74,82 C72,92 64,102 54,102 C46,92 45,72 52,45 Z" fill="url(#belly-orange)" />
+            <path d="M66,52 C71,54 73,58 70,62 C66,59 64,55 66,52 Z" fill="#ffffff" opacity="0.9"/>
+            <path d="M48,28 C62,28 66,36 65,46 C60,58 50,75 48,98 L41,101 L39,88 C36,68 38,43 48,28 Z" fill="url(#feather-blue)" />
+            <path d="M48,28 C59,28 65,35 64,44 C57,42 52,37 48,28 Z" fill="#00e5ff" />
+            <path d="M62,40 L104,44 L61,46 Z" fill="#1e293b" />
+            <circle cx="56" cy="37" r="2" fill="#ffffff" />
+            <circle cx="56" cy="37" r="0.9" fill="#0f172a" />
         </svg>
     </div>
 
+    <div class="ambient-layer" id="ambientLayer"></div>
+    <div class="fish-layer" id="fishLayer"></div>
+
     <div class="container">
-        <div class="card">
-            <div class="logo">
-                <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"/>
+        <div class="redirect-card">
+            <div class="logo-wrapper">
+                <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z" />
                 </svg>
             </div>
 
             <h1>Birdnet-Go Timéo</h1>
 
-            <div id="state-loading" class="state active">
+            <div id="state-loading" class="state-container active">
                 <div class="spinner"></div>
-                <p class="status">Connexion au lac en cours...</p>
+                <p class="status-text">Connexion au lac en cours...</p>
             </div>
 
-            <div id="state-countdown" class="state">
+            <div id="state-countdown" class="state-container">
                 <p class="subtitle">Vous allez être redirigé vers</p>
-
-                <button id="copy-badge" type="button" class="badge" title="Copier l'adresse">
+                
+                <button id="copy-badge" type="button" class="destination-badge" title="Copier l'adresse">
                     <span>🔗</span>
                     <span id="destination-name">...</span>
-                    <span style="display:inline-flex;align-items:center;">
+                    <span class="copy-icon-wrapper">
                         <svg class="copy-icon" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
-                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
                         </svg>
-                        <svg class="check" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                            <polyline points="20 6 9 17 4 12"/>
+                        <svg class="check-icon" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="20 6 9 17 4 12"></polyline>
                         </svg>
                     </span>
                 </button>
 
-                <div class="wheel">
-                    <svg viewBox="0 0 36 36" width="80" height="80">
-                        <circle cx="18" cy="18" r="14" fill="none" stroke-width="2"/>
-                        <circle id="progress-circle" class="progress" cx="18" cy="18" r="14" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round"/>
+                <div class="countdown-wheel">
+                    <svg viewBox="0 0 36 36" width="90" height="90">
+                        <circle cx="18" cy="18" r="16" fill="none" stroke="rgba(255,255,255,0.03)" stroke-width="2"/>
+                        <circle id="progress-circle" class="circle-progress" cx="18" cy="18" r="16" fill="none" stroke="var(--secondary-glow)" stroke-width="2" stroke-linecap="round"/>
                     </svg>
-                    <div class="num" id="countdown-num">8</div>
+                    <div class="countdown-number" id="countdown-num">8</div>
                 </div>
+                
+                <p class="countdown-caption">Redirection automatique...</p>
 
-                <p class="caption">Redirection automatique...</p>
-
-                <a id="direct-btn" href="#" class="btn" rel="noopener noreferrer">
+                <a id="direct-btn" href="#" class="action-btn" rel="noopener noreferrer">
                     <span>Y aller maintenant</span>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                        <line x1="5" y1="12" x2="19" y2="12"/>
-                        <polyline points="12 5 19 12 12 19"/>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                        <polyline points="12 5 19 12 12 19"></polyline>
                     </svg>
                 </a>
             </div>
 
-            <div id="state-error" class="state">
-                <div class="error-icon">
-                    <svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="12" cy="12" r="10"/>
-                        <line x1="12" y1="8" x2="12" y2="12"/>
-                        <line x1="12" y1="16" x2="12.01" y2="16"/>
+            <div id="state-error" class="state-container">
+                <div class="error-icon-wrapper">
+                    <svg viewBox="0 0 24 24" width="42" height="42" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="8" x2="12" y2="12"></line>
+                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
                     </svg>
                 </div>
                 <h3 class="error-title">Lac introuvable</h3>
-                <p class="error-desc" id="error-desc">Impossible de joindre le serveur de redirection.</p>
-                <button id="retry-btn" type="button" class="btn retry">Réessayer</button>
+                <p class="error-message" id="error-desc">Impossible de joindre le serveur de redirection ou tunnel non configuré.</p>
+                <button id="retry-btn" type="button" class="action-btn retry-btn">Réessayer</button>
             </div>
         </div>
     </div>
 
     <script>
+        // Sécurité obfusquée de l'URL brute du Gist (Masque la structure du lien face aux parseurs de bots simples)
         const _0x1a2b = "aHR0cHM6Ly9naXN0LmdpdGh1YnVzZXJjb250ZW50LmNvbS90aW1lb2Jvbm5pbi1wcm9nL2U5YjQ4MTE3MTc2MThhMjAwZTNlMjQ0N2Q1NTMzNDhmL3Jhdy90dW5uZWwudHh0";
         const FETCH_URL = window.atob(_0x1a2b);
 
+        const ambientLayer = document.getElementById('ambientLayer');
+        const fishLayer = document.getElementById('fishLayer');
         const kingfisher = document.getElementById('kingfisher');
+        
         let countdownInterval = null;
         let targetRedirectUrl = '';
 
-        function initScene() {
-            const stars = document.getElementById('stars');
-            for (let i = 0; i < 20; i++) {
-                const s = document.createElement('div');
-                s.className = 'star';
-                s.style.left = Math.random() * 100 + 'vw';
-                s.style.top = Math.random() * 40 + 'vh';
-                s.style.animationDelay = Math.random() * 4 + 's';
-                s.style.animationDuration = (3 + Math.random() * 3) + 's';
-                stars.appendChild(s);
+        // --- ANIMATIONS VISUELLES ---
+        function initAmbient() {
+            ambientLayer.innerHTML = '';
+            for(let i = 0; i < 35; i++) {
+                let drop = document.createElement('div');
+                drop.className = 'drop-rain';
+                drop.style.left = Math.random() * 100 + 'vw';
+                drop.style.animationDuration = (0.6 + Math.random() * 0.6) + 's';
+                drop.style.animationDelay = Math.random() * 2 + 's';
+                ambientLayer.appendChild(drop);
             }
-
-            const fishLayer = document.getElementById('fishLayer');
-            for (let i = 0; i < 2; i++) {
-                const f = document.createElement('div');
-                f.className = 'fish';
-                f.style.bottom = (4 + i * 3) + '%';
-                f.style.animationDuration = (20 + i * 8) + 's';
-                f.style.animationDelay = (i * 6) + 's';
-                f.innerHTML = `<svg viewBox="0 0 28 12" width="24" height="10"><path d="M2,6 C10,2 20,2 24,6 C20,10 10,10 2,6 Z" fill="rgba(56,189,248,0.25)"/><path d="M24,6 L28,3 L27,9 Z" fill="rgba(56,189,248,0.15)"/></svg>`;
-                fishLayer.appendChild(f);
+            for(let i = 0; i < 20; i++) {
+                let v = document.createElement('div');
+                v.className = 'evaporation';
+                v.style.left = Math.random() * 100 + 'vw';
+                v.style.animationDuration = (4 + Math.random() * 4) + 's';
+                v.style.animationDelay = Math.random() * 3 + 's';
+                ambientLayer.appendChild(v);
             }
+        }
 
-            const pLayer = document.getElementById('particleLayer');
-            for (let i = 0; i < 8; i++) {
-                const p = document.createElement('div');
-                p.className = 'particle';
-                p.style.left = Math.random() * 100 + 'vw';
-                p.style.animationDuration = (12 + Math.random() * 8) + 's';
-                p.style.animationDelay = Math.random() * 6 + 's';
-                pLayer.appendChild(p);
-            }
-
-            // Écailles d'eau scintillantes
-            const scales = document.getElementById('scales');
-            for (let i = 0; i < 30; i++) {
-                const sc = document.createElement('div');
-                sc.className = 'scale';
-                sc.style.left = (5 + Math.random() * 90) + 'vw';
-                sc.style.bottom = (2 + Math.random() * 18) + '%';
-                sc.style.animationDelay = Math.random() * 3 + 's';
-                sc.style.animationDuration = (2 + Math.random() * 3) + 's';
-                scales.appendChild(sc);
-            }
-
-            // Œufs de grenouille (amas gélatineux)
-            const eggs = document.getElementById('eggs');
-            for (let i = 0; i < 12; i++) {
-                const e = document.createElement('div');
-                e.className = 'egg-cluster';
-                e.style.left = (Math.random() * 14) + 'px';
-                e.style.top = (Math.random() * 6) + 'px';
-                e.style.animationDelay = (Math.random() * 2) + 's';
-                eggs.appendChild(e);
+        function initFishes() {
+            fishLayer.innerHTML = '';
+            for(let i = 0; i < 3; i++) {
+                let fish = document.createElement('div');
+                fish.className = 'fish';
+                fish.style.top = Math.random() * 100 + '%';
+                fish.style.animationDuration = (12 + Math.random() * 8) + 's';
+                fish.style.animationDelay = Math.random() * 4 + 's';
+                fish.innerHTML = `<svg viewBox="0 0 30 15" width="25" height="12"><path d="M2,7 C10,2 20,2 25,7 C20,12 10,12 2,7 Z" fill="rgba(56, 189, 248, 0.4)"/><path d="M24,7 L30,3 L29,11 Z" fill="rgba(56, 189, 248, 0.3)"/></svg>`;
+                fishLayer.appendChild(fish);
             }
         }
 
         function dive() {
             if (!kingfisher.classList.contains('diving')) {
                 kingfisher.classList.add('diving');
-                setTimeout(() => kingfisher.classList.remove('diving'), 2000);
+                setTimeout(() => kingfisher.classList.remove('diving'), 1800);
             }
         }
-        kingfisher.addEventListener('click', (e) => { e.stopPropagation(); dive(); });
-        setInterval(dive, 16000);
+        
+        kingfisher.addEventListener('click', (e) => {
+            e.stopPropagation();
+            dive();
+        });
+        setInterval(dive, 14000);
 
-        function showState(name) {
-            document.querySelectorAll('.state').forEach(el => el.classList.remove('active'));
-            const s = document.getElementById('state-' + name);
-            if (s) s.classList.add('active');
+        // --- LOGIQUE DES ÉTATS DE L'UI ---
+        function showState(stateName) {
+            document.querySelectorAll('.state-container').forEach(el => el.classList.remove('active'));
+            const target = document.getElementById(`state-${stateName}`);
+            if (target) target.classList.add('active');
         }
 
+        // --- LOGIQUE DE COPIE CLIPBOARD ---
         const copyBadge = document.getElementById('copy-badge');
-        copyBadge.addEventListener('click', async () => {
-            if (!targetRedirectUrl) return;
-            try {
-                await navigator.clipboard.writeText(targetRedirectUrl);
-                copyBadge.classList.add('copied');
-                setTimeout(() => copyBadge.classList.remove('copied'), 2000);
-            } catch (err) { console.error('Copier échoué', err); }
-        });
+        if (copyBadge) {
+            copyBadge.addEventListener('click', async () => {
+                if (!targetRedirectUrl) return;
+                try {
+                    await navigator.clipboard.writeText(targetRedirectUrl);
+                    copyBadge.classList.add('copied');
+                    setTimeout(() => copyBadge.classList.remove('copied'), 2000);
+                } catch (err) {
+                    console.error('Erreur lors du copier: ', err);
+                }
+            });
+        }
 
+        // --- RECUPERATION DU GIST ET REDIRECTION ---
         async function fetchDestination() {
             showState('loading');
             if (countdownInterval) clearInterval(countdownInterval);
             document.getElementById('progress-circle').classList.remove('active');
 
             try {
-                await new Promise(r => setTimeout(r, 900));
-                const res = await fetch(FETCH_URL);
-                if (!res.ok) throw new Error(`Erreur serveur (${res.status})`);
+                await new Promise(resolve => setTimeout(resolve, 1000));
 
                 const raw = await res.text();
                 const url = (raw === 'PC OFF — Tunnel arrêté') ? "offline.html" : raw.trim();
+                const response = await fetch(FETCH_URL);
+                if (!response.ok) {
+                    throw new Error(`Erreur serveur (${response.status})`);
+                }
+                
+                const rawUrl = await response.text();
+                const targetUrl = rawUrl.trim();
+                
+                if (!targetUrl || targetUrl === '...' || targetUrl === '') {
+                    throw new Error("L'URL configurée dans tunnel.txt est vide ou invalide.");
+                }
 
-                if (!url || url === '...') throw new Error("L'URL configurée est vide.");
-                if (/^(javascript|data):/i.test(url)) throw new Error("Protocole non sécurisé.");
-                new URL(url.includes('://') ? url : 'http://' + url);
+                // Sécurité : Bloque l'injection de protocoles arbitraires (ex: javascript:alert(1))
+                if (targetUrl.toLowerCase().startsWith('javascript:') || targetUrl.toLowerCase().startsWith('data:')) {
+                    throw new Error("Protocole non sécurisé détecté.");
+                }
 
-                startCountdown(url);
+                // Validation syntaxique de l'URL cible
+                try {
+                    new URL(targetUrl.includes('://') ? targetUrl : 'http://' + targetUrl);
+                } catch (_) {
+                    throw new Error("Le format brut de l'adresse distante est corrompu.");
+                }
+                
+                startCountdown(targetUrl);
             } catch (err) {
-                console.error(err);
-                document.getElementById('error-desc').textContent =
-                    `Impossible de récupérer l'adresse de destination. (${err.message}) Vérifie la configuration de tunnel.txt.`;
+                console.error("Redirection error:", err);
+                let message = "Impossible de récupérer l'adresse de destination.";
+                message = `${message} (${err.message}). Vérifie la configuration de ton fichier tunnel.txt.`;
+                
+                // Sécurité contextuelle : Injection propre sans utiliser innerHTML
+                document.getElementById('error-desc').textContent = message;
                 showState('error');
             }
         }
@@ -889,31 +488,39 @@
 
             if (url === 'offline.html') {
                 dest.textContent = 'Birdnet-Go est actuellement hors ligne';
-            }
+            }    
+            const destNameEl = document.getElementById('destination-name');
             try {
-                const u = new URL(url.startsWith('http') ? url : 'http://' + url);
-                dest.textContent = u.hostname + (u.port ? ':' + u.port : '');
+                if (url.startsWith('http://') || url.startsWith('https://')) {
+                    const parsed = new URL(url);
+                    destNameEl.textContent = parsed.hostname + (parsed.port ? `:${parsed.port}` : '');
+                } else {
+                    destNameEl.textContent = url;
+                }
             } catch (e) {
-                dest.textContent = url.replace(/[^\w\.\:\-\/]/gi, '');
+                // Nettoyage préventif des caractères hors-normes URL pour l'affichage textuel
+                destNameEl.textContent = url.replace(/[^\w\.\:\-\/]/gi, '');
             }
 
             document.getElementById('direct-btn').href = url;
-
-            const pc = document.getElementById('progress-circle');
-            pc.style.animation = 'none';
-            pc.offsetHeight;
-            pc.style.animation = null;
-            pc.classList.add('active');
-
-            let count = 8;
-            const num = document.getElementById('countdown-num');
-            num.textContent = count;
-
+            
+            const progressCircle = document.getElementById('progress-circle');
+            progressCircle.style.animation = 'none';
+            progressCircle.offsetHeight; /* trigger reflow */
+            progressCircle.style.animation = null;
+            progressCircle.classList.add('active');
+            
+            let count = 8; 
+            const countdownNum = document.getElementById('countdown-num');
+            countdownNum.textContent = count;
+            
             countdownInterval = setInterval(() => {
                 count--;
-                num.textContent = count;
+                countdownNum.textContent = count;
+                
                 if (count <= 0) {
                     clearInterval(countdownInterval);
+                    // Sécurité d'exécution : location.replace empêche l'accumulation de boucles dans l'historique du navigateur
                     window.location.replace(url);
                 }
             }, 1000);
@@ -922,7 +529,8 @@
         document.getElementById('retry-btn').addEventListener('click', fetchDestination);
 
         window.addEventListener('DOMContentLoaded', () => {
-            initScene();
+            initAmbient();
+            initFishes();
             fetchDestination();
         });
     </script>
