@@ -498,6 +498,430 @@
     </script>
 </body>
 </html>
+
+        .ripple {
+            position: absolute; border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%; transform: translateX(-50%) translateY(-50%) rotateX(60deg);
+            animation: ripple-out 1.5s ease-out forwards; pointer-events: none; z-index: 1;
+        }
+        @keyframes ripple-out {
+            0% { width: 0; height: 0; opacity: 1; }
+            100% { width: 80px; height: 80px; opacity: 0; }
+        }
+
+        /* NOUVEAU: Étoiles filantes */
+        .shooting-star {
+            position: absolute; width: 100px; height: 2px;
+            background: linear-gradient(to right, rgba(255,255,255,0), rgba(255,255,255,1));
+            transform: rotate(-45deg);
+            animation: shoot 1s linear forwards; pointer-events: none; z-index: 1;
+        }
+        @keyframes shoot { 
+            0% { transform: translateX(0) translateY(0) rotate(-45deg); opacity: 1; }
+            100% { transform: translateX(-300px) translateY(300px) rotate(-45deg); opacity: 0; }
+        }
+
+        /* NOUVEAU: Lucioles */
+        .firefly {
+            position: absolute; width: 4px; height: 4px; background: #eab308;
+            border-radius: 50%; box-shadow: 0 0 10px 2px rgba(234, 179, 8, 0.8);
+            animation: firefly-float 4s ease-in-out forwards; pointer-events: none; z-index: 6;
+        }
+        @keyframes firefly-float {
+            0% { transform: translateY(0) translateX(0); opacity: 0; }
+            50% { opacity: 1; transform: translateY(-20px) translateX(15px); }
+            100% { transform: translateY(-40px) translateX(-10px); opacity: 0; }
+        }
+
+        /* --- MARTIN-PÊCHEUR --- */
+        .perch-line {
+            position: absolute; bottom: 15px; right: -20px; width: 220px; height: 1px;
+            background: linear-gradient(to left, rgba(255,255,255,0.2), transparent);
+            transform-origin: right; animation: sway 6s ease-in-out infinite; z-index: 5;
+        }
+        @keyframes sway { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(1deg); } }
+
+        .kingfisher {
+            position: absolute; bottom: 15px; right: 40px; width: 80px; height: 80px;
+            transform-origin: bottom center; z-index: 10; transition: transform 0.1s;
+        }
+
+        /* --- 3. POISSONS DORÉS --- */
+        .fish {
+            position: absolute; z-index: 3;
+            transition: top 0.8s ease-out, left 0.8s linear, filter 1s;
+        }
+        .fish svg {
+            fill: var(--gold); filter: drop-shadow(0 0 4px var(--gold-glow));
+            animation: swim-wiggle 1.5s ease-in-out infinite alternate, gold-pulse 4s infinite alternate;
+        }
+        @keyframes swim-wiggle { 0% { transform: translateY(-4px) rotate(-2deg); } 100% { transform: translateY(4px) rotate(2deg); } }
+        @keyframes gold-pulse { 0% { opacity: 0.5; } 100% { opacity: 1; filter: drop-shadow(0 0 8px var(--gold)); } }
+
+        .bubble {
+            position: absolute; border: 1px solid rgba(255,255,255,0.4); border-radius: 50%;
+            animation: bubble-rise 2s ease-in forwards; pointer-events: none;
+        }
+        @keyframes bubble-rise { to { transform: translateY(-60px) scale(1.5); opacity: 0; } }
+
+        /* --- 4. LA LOUTRE --- */
+        .otter {
+            position: absolute; bottom: -80px; left: -100px; z-index: 4;
+            transition: transform 2s cubic-bezier(0.25, 1, 0.5, 1), filter 2s;
+            filter: blur(4px); opacity: 0;
+        }
+        .otter.active { transform: translateY(-70px) translateX(20vw); filter: blur(0px); opacity: 1; }
+        .otter.floating { transform: translateY(-80px) translateX(20vw) rotate(10deg); }
+
+        /* --- 1. UI FLOTTANTE --- */
+        .ui-layer { position: relative; z-index: 20; animation: float-ui 8s ease-in-out infinite; pointer-events: none; }
+        @keyframes float-ui { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
+
+        .redirect-card {
+            width: 380px; padding: 45px; background: var(--card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 32px;
+            backdrop-filter: blur(15px); text-align: center;
+            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.7);
+            position: relative; overflow: hidden; pointer-events: auto;
+        }
+
+        .redirect-card::after {
+            content: ""; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+            background: linear-gradient(45deg, transparent 45%, rgba(255,255,255,0.03) 50%, transparent 55%);
+            animation: glass-shine 10s linear infinite; pointer-events: none;
+        }
+        @keyframes glass-shine { to { transform: translateX(50%) translateY(50%); } }
+
+        h1 { font-size: 1.6rem; font-weight: 500; margin-bottom: 8px; letter-spacing: -0.5px;}
+        .subtitle { font-size: 0.85rem; color: #94a3b8; margin-bottom: 24px; }
+        
+        .spinner {
+            width: 32px; height: 32px; border: 2px solid rgba(255,255,255,0.05);
+            border-top-color: var(--secondary-glow, #38bdf8); border-radius: 50%;
+            margin: 30px auto; animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .countdown-wheel { position: relative; width: 90px; height: 90px; margin: 0 auto 24px; display: flex; align-items: center; justify-content: center; }
+        .circle-progress { stroke-dasharray: 100.53; stroke-dashoffset: 0; transform: rotate(-90deg); transform-origin: center; transition: stroke-dashoffset 0.5s linear; }
+        .circle-progress.active { animation: countdown-circle 4s linear forwards; }
+        @keyframes countdown-circle { from { stroke-dashoffset: 0; } to { stroke-dashoffset: 100.53; } }
+        
+        .countdown-number { position: absolute; font-size: 2.2rem; font-weight: 600; color: #fff; }
+        .action-btn {
+            display: block; width: 100%; padding: 14px; border-radius: 14px;
+            background: #fff; color: #02111a; text-decoration: none; font-weight: 600;
+            transition: transform 0.2s, background 0.2s;
+        }
+        .action-btn:hover { background: #e2e8f0; transform: translateY(-2px); }
+    </style>
+</head>
+<body>
+
+    <div id="world">
+        <div class="sky" id="sky">
+            <div class="perch-line"></div>
+            <div class="kingfisher" id="kingfisher">
+                <svg viewBox="0 0 120 120" width="100%" height="100%">
+                    <path d="M52,45 C65,45 76,58 74,82 C72,92 64,102 54,102 C46,92 45,72 52,45 Z" fill="#ff9100" />
+                    <path d="M66,52 C71,54 73,58 70,62 C66,59 64,55 66,52 Z" fill="#ffffff" opacity="0.9"/>
+                    <path d="M48,28 C62,28 66,36 65,46 C60,58 50,75 48,98 L41,101 L39,88 C36,68 38,43 48,28 Z" fill="#00e5ff" />
+                    <path d="M62,40 L104,44 L61,46 Z" fill="#1e293b" />
+                    <circle cx="56" cy="37" r="2" fill="#ffffff" /><circle cx="56" cy="37" r="1" fill="#0f172a" />
+                </svg>
+            </div>
+        </div>
+
+        <div class="water" id="water">
+            <div id="surface" style="position: absolute; top: 0; width: 100%; height: 1px;"></div>
+            
+            <div class="otter" id="otter">
+                <svg width="80" height="50" viewBox="0 0 80 50">
+                    <path d="M10,50 C15,20 40,15 50,25 C60,35 70,25 75,30 C80,35 75,50 75,50 Z" fill="#01060a" />
+                    <circle cx="55" cy="28" r="1.5" fill="#fff" opacity="0.5"/>
+                    <circle cx="70" cy="32" r="2" fill="#000" />
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <div class="ui-layer">
+        <div class="redirect-card">
+            <h1>Birdnet-Go</h1>
+            <div id="state-loading">
+                <div class="spinner"></div>
+                <p class="subtitle">Analyse de l'écosystème...</p>
+            </div>
+            <div id="state-countdown" style="display:none;">
+                <p class="subtitle" id="destination-name">Connexion établie</p>
+                <div class="countdown-wheel">
+                    <svg viewBox="0 0 36 36" width="90" height="90">
+                        <circle cx="18" cy="18" r="16" fill="none" stroke="rgba(255,255,255,0.03)" stroke-width="2"/>
+                        <circle id="progress-circle" class="circle-progress" cx="18" cy="18" r="16" fill="none" stroke="var(--gold)" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    <div class="countdown-number" id="countdown-num">8</div>
+                </div>
+                <a id="direct-btn" href="#" class="action-btn">Plonger dans le lac</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- VARIABLES GLOBALES ET MOTEUR PHYSIQUE ---
+        const world = document.getElementById('world');
+        const sky = document.getElementById('sky');
+        const water = document.getElementById('water');
+        const surface = document.getElementById('surface');
+        const kingfisher = document.getElementById('kingfisher');
+        const otter = document.getElementById('otter');
+        
+        let mouseX = window.innerWidth / 2;
+        let mouseY = window.innerHeight / 2;
+        let isRaining = false;
+        let rainIntensity = 0;
+        let timeOfDay = 0; 
+
+        // --- INTERACTIVITÉ ---
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX; mouseY = e.clientY;
+            
+            const rect = kingfisher.getBoundingClientRect();
+            const angleX = (mouseX - (rect.left + rect.width/2)) / 30;
+            const angleY = (mouseY - (rect.top + rect.height/2)) / 15;
+            kingfisher.style.transform = `scaleX(-1) rotate(${Math.max(-15, Math.min(15, angleY))}deg)`;
+            
+            document.querySelectorAll('.cloud').forEach(cloud => {
+                const cRect = cloud.getBoundingClientRect();
+                const dist = Math.hypot(rect.left - cRect.left, rect.top - cRect.top);
+                cloud.style.opacity = dist < 150 ? '0.1' : '0.4';
+            });
+        });
+
+        // --- GESTION DU CLIMAT & ANIMATIONS NUIT ---
+        function weatherEngine() {
+            timeOfDay += 0.05; 
+            if(timeOfDay > 15) timeOfDay = 0;
+            const darkness = Math.max(0, (timeOfDay - 7) / 8); 
+            world.style.filter = `hue-rotate(${darkness * 20}deg) brightness(${1 - (darkness * 0.4)})`;
+
+            // Étoiles filantes (uniquement quand il fait sombre)
+            if(darkness > 0.5 && Math.random() > 0.98 && !isRaining) {
+                let star = document.createElement('div');
+                star.className = 'shooting-star';
+                star.style.left = (50 + Math.random() * window.innerWidth) + 'px';
+                star.style.top = (Math.random() * 20) + '%';
+                sky.appendChild(star);
+                setTimeout(() => star.remove(), 1000);
+            }
+
+            // Lucioles près de la surface (nuit et pas de pluie)
+            if(darkness > 0.6 && Math.random() > 0.95 && !isRaining) {
+                let firefly = document.createElement('div');
+                firefly.className = 'firefly';
+                firefly.style.left = (Math.random() * window.innerWidth) + 'px';
+                firefly.style.bottom = (Math.random() * 40) + 'px';
+                sky.appendChild(firefly);
+                setTimeout(() => firefly.remove(), 4000);
+            }
+
+            // Brume
+            if(Math.random() > 0.8) {
+                let mist = document.createElement('div');
+                mist.className = 'mist';
+                mist.style.width = mist.style.height = (20 + Math.random() * 40) + 'px';
+                mist.style.left = (Math.random() * 100) + 'vw';
+                mist.style.animationDuration = (8 + Math.random() * 7) + 's';
+                sky.appendChild(mist);
+                setTimeout(() => mist.remove(), 15000);
+            }
+
+            // Nuages
+            if(Math.random() > 0.98) {
+                let cloud = document.createElement('div');
+                cloud.className = 'cloud';
+                cloud.style.top = (Math.random() * 40) + '%';
+                cloud.style.width = (100 + Math.random() * 200) + 'px';
+                cloud.style.height = (20 + Math.random() * 30) + 'px';
+                cloud.style.left = '-200px';
+                cloud.style.opacity = '0.4';
+                cloud.style.transition = 'transform 60s linear, opacity 1s';
+                sky.appendChild(cloud);
+                
+                setTimeout(() => cloud.style.transform = `translateX(${window.innerWidth + 400}px)`, 50);
+                setTimeout(() => cloud.remove(), 60000);
+            }
+
+            // Pluie
+            if(Math.random() > 0.99) {
+                isRaining = !isRaining; 
+                rainIntensity = isRaining ? 1 + Math.random() * 3 : 0;
+            }
+
+            if(isRaining) {
+                for(let i=0; i<rainIntensity; i++) {
+                    let drop = document.createElement('div');
+                    drop.className = 'drop';
+                    let xPos = Math.random() * window.innerWidth;
+                    drop.style.left = xPos + 'px';
+                    drop.style.top = (Math.random() * -100) + 'px';
+                    
+                    const fallTime = 600 + Math.random() * 200; 
+                    drop.style.transition = `transform ${fallTime}ms linear, opacity ${fallTime}ms`;
+                    sky.appendChild(drop);
+
+                    setTimeout(() => {
+                        drop.style.transform = `translateY(${window.innerHeight/2 + 50}px)`;
+                        drop.style.opacity = '0';
+                    }, 10);
+
+                    setTimeout(() => {
+                        drop.remove();
+                        let ripple = document.createElement('div');
+                        ripple.className = 'ripple';
+                        ripple.style.left = xPos + 'px';
+                        surface.appendChild(ripple);
+                        setTimeout(() => ripple.remove(), 1500);
+                    }, fallTime);
+                }
+            }
+        }
+        setInterval(weatherEngine, 100);
+
+        // --- INTELLIGENCE DES POISSONS ---
+        class Fish {
+            constructor() {
+                this.el = document.createElement('div');
+                this.el.className = 'fish';
+                this.el.innerHTML = `<svg width="28" height="14"><path d="M2,7 C10,2 20,2 25,7 C20,12 10,12 2,7 Z"/><path d="M24,7 L30,3 L29,11 Z"/></svg>`;
+                water.appendChild(this.el);
+                
+                this.x = Math.random() * window.innerWidth;
+                this.y = 20 + Math.random() * 60; 
+                this.speed = 0.5 + Math.random() * 1;
+                this.dir = Math.random() > 0.5 ? 1 : -1;
+                this.state = 'swim'; 
+                
+                this.update();
+                setInterval(() => this.logic(), 200); 
+            }
+
+            logic() {
+                const fRect = this.el.getBoundingClientRect();
+                const distMouse = Math.hypot(mouseX - (fRect.left + 14), mouseY - (fRect.top + 7));
+                const otterActive = otter.classList.contains('active');
+
+                if ((distMouse < 150 && mouseY > window.innerHeight/2) || otterActive) {
+                    if(this.state !== 'flee') {
+                        this.state = 'flee';
+                        this.speed = 4;
+                        this.y = Math.min(95, this.y + 20); 
+                        this.dir = mouseX > fRect.left ? -1 : 1; 
+                        this.spawnBubbles();
+                    }
+                } else if (this.state === 'flee') {
+                    this.state = 'swim';
+                    this.speed = 0.5 + Math.random() * 1;
+                    this.y = 20 + Math.random() * 40; 
+                } else {
+                    if(Math.random() > 0.95) this.state = this.state === 'swim' ? 'pause' : 'swim';
+                }
+
+                if(this.state !== 'pause') {
+                    this.x += this.speed * this.dir * 10;
+                    if(this.x > window.innerWidth + 50) { this.x = -50; this.y = 20+Math.random()*60; }
+                    if(this.x < -50) { this.x = window.innerWidth + 50; this.y = 20+Math.random()*60; }
+                }
+                this.update();
+            }
+
+            spawnBubbles() {
+                for(let i=0; i<3; i++) {
+                    let b = document.createElement('div');
+                    b.className = 'bubble';
+                    b.style.left = (this.x + 10) + 'px';
+                    b.style.top = this.y + '%';
+                    b.style.width = b.style.height = (3 + Math.random()*4) + 'px';
+                    water.appendChild(b);
+                    setTimeout(() => b.remove(), 2000);
+                }
+            }
+
+            update() {
+                this.el.style.left = this.x + 'px';
+                this.el.style.top = this.y + '%';
+                this.el.style.transform = `scaleX(${this.dir === 1 ? -1 : 1})`; 
+                this.el.style.filter = `blur(${this.y > 60 ? (this.y-60)/10 : 0}px)`;
+            }
+        }
+        
+        const fishArray = [];
+        for(let i=0; i<6; i++) fishArray.push(new Fish());
+
+        // --- IA DE LA LOUTRE ---
+        function otterLogic() {
+            if(Math.random() > 0.7 && !otter.classList.contains('active')) {
+                otter.classList.add('active');
+                
+                if(isRaining) {
+                    otter.classList.add('floating');
+                } else {
+                    otter.classList.remove('floating');
+                }
+
+                setTimeout(() => {
+                    otter.classList.remove('active');
+                    otter.classList.remove('floating');
+                    for(let i=0; i<5; i++) {
+                        setTimeout(() => {
+                            let b = document.createElement('div');
+                            b.className = 'bubble';
+                            const oRect = otter.getBoundingClientRect();
+                            b.style.left = (oRect.left + 40 + Math.random()*20) + 'px';
+                            b.style.top = '10%';
+                            b.style.width = b.style.height = '6px';
+                            water.appendChild(b);
+                            setTimeout(() => b.remove(), 2000);
+                        }, i * 200);
+                    }
+                }, 6000);
+            }
+        }
+        setInterval(otterLogic, 10000); 
+
+        // --- REDIRECTEUR ---
+        async function startSystem() {
+            try {
+                await new Promise(r => setTimeout(r, 800)); 
+                const res = await fetch('https://gist.githubusercontent.com/timeobonnin-prog/e9b4811717618a200e3e2447d553348f/raw/tunnel.txt');
+                const url = (await res.text()).trim();
+                if(!url || url === '...') throw new Error();
+
+                document.getElementById('state-loading').style.display = 'none';
+                document.getElementById('state-countdown').style.display = 'block';
+                document.getElementById('destination-name').textContent = new URL(url).hostname;
+                document.getElementById('direct-btn').href = url;
+                document.getElementById('progress-circle').classList.add('active');
+                
+                let count = 8;
+                const numEl = document.getElementById('countdown-num');
+                
+                const interval = setInterval(() => {
+                    count--;
+                    numEl.textContent = count;
+                    if(count <= 0) {
+                        clearInterval(interval);
+                        window.location.href = url;
+                    }
+                }, 500); 
+            } catch(e) {
+                // Modification : L'erreur est bloquée silencieusement pour ne pas casser le visuel du lac.
+                console.log("Erreur de récupération du tunnel, l'animation continue.");
+            }
+        }
+        window.onload = startSystem;
+    </script>
+</body>
+</html>
             background: linear-gradient(to bottom, transparent, rgba(56, 189, 248, 0.3));
             animation: fall linear infinite;
         }
