@@ -461,23 +461,18 @@
         function startCountdown(url) {
             targetRedirectUrl = url;
             showState('countdown');
-
-            const dest = document.getElementById('destination-name');
-
-            if (url === 'offline.html') {
-                dest.textContent = 'Birdnet-Go est actuellement hors ligne';
-            }    
+        
             const destNameEl = document.getElementById('destination-name');
-            try {
-                if (url.startsWith('http://') || url.startsWith('https://')) {
-                    const parsed = new URL(url);
+        
+            if (url === 'offline.html') {
+                destNameEl.textContent = 'PC OFF — Tunnel arrêté';
+            } else {
+                try {
+                    const parsed = new URL(url.startsWith('http') ? url : 'http://' + url);
                     destNameEl.textContent = parsed.hostname + (parsed.port ? `:${parsed.port}` : '');
-                } else {
-                    destNameEl.textContent = url;
+                } catch (e) {
+                    destNameEl.textContent = url.replace(/[^\w\.\:\-\/]/gi, '');
                 }
-            } catch (e) {
-                // Nettoyage préventif des caractères hors-normes URL pour l'affichage textuel
-                destNameEl.textContent = url.replace(/[^\w\.\:\-\/]/gi, '');
             }
 
             document.getElementById('direct-btn').href = url;
