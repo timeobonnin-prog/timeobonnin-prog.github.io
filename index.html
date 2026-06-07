@@ -73,32 +73,45 @@
             50% { opacity: 0.6; transform: scale(1.4); }
         }
 
-        /* Lune */
+        /* Lune & halo */
         .moon {
             position: absolute;
             top: 10%;
             left: 14%;
-            width: 32px;
-            height: 32px;
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
             background: #f8fafc;
-            opacity: 0.85;
-            box-shadow: 0 0 40px rgba(248, 250, 252, 0.08);
+            opacity: 0.95;
+            box-shadow: 0 0 60px rgba(248, 250, 252, 0.25), 0 0 120px rgba(248, 250, 252, 0.12);
+            z-index: 2;
+        }
+        .moon-glow {
+            position: absolute;
+            top: 10%;
+            left: 14%;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(248, 250, 252, 0.15);
+            transform: translate(0, 0) scale(2.8);
+            filter: blur(20px);
+            z-index: 1;
         }
         .moon-reflection {
             position: absolute;
             top: 10%;
             left: 14%;
-            width: 32px;
-            height: 120px;
-            background: linear-gradient(to bottom, rgba(248,250,252,0.06), transparent);
-            transform: translateY(32px);
-            filter: blur(8px);
-            animation: shimmer 5s ease-in-out infinite;
+            width: 36px;
+            height: 140px;
+            background: linear-gradient(to bottom, rgba(248,250,252,0.08), transparent);
+            transform: translateY(36px);
+            filter: blur(10px);
+            animation: reflection-pulse 5s ease-in-out infinite;
         }
-        @keyframes shimmer {
-            0%, 100% { opacity: 0.4; transform: translateY(32px) scaleX(1); }
-            50% { opacity: 0.7; transform: translateY(32px) scaleX(1.2); }
+        @keyframes reflection-pulse {
+            0%, 100% { opacity: 0.4; transform: translateY(36px) scaleX(1); }
+            50% { opacity: 0.8; transform: translateY(36px) scaleX(1.3); }
         }
 
         /* Horizon & Eau */
@@ -148,6 +161,29 @@
             100% { width: 300px; opacity: 0; }
         }
 
+        /* Écailles scintillantes */
+        .water-scales {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 22%;
+            z-index: 2;
+            pointer-events: none;
+        }
+        .scale {
+            position: absolute;
+            width: 3px;
+            height: 2px;
+            border-radius: 50%;
+            background: rgba(148, 200, 220, 0.15);
+            animation: scale-twinkle 3s ease-in-out infinite;
+        }
+        @keyframes scale-twinkle {
+            0%, 100% { opacity: 0.1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.6); }
+        }
+
         /* Brume basse */
         .mist {
             position: absolute;
@@ -162,16 +198,164 @@
             50% { opacity: 0.6; }
         }
 
-        /* Poissons */
+        /* Poissons nageurs */
         .fish {
             position: absolute;
             bottom: 8%;
             opacity: 0.25;
             animation: swim 18s linear infinite;
+            z-index: 2;
         }
         @keyframes swim {
             0% { transform: translateX(-60px) scaleX(-1); }
             100% { transform: translateX(110vw) scaleX(-1); }
+        }
+
+        /* Poisson sauteur */
+        .jumper {
+            position: absolute;
+            left: 55%;
+            bottom: 10%;
+            width: 24px;
+            height: 12px;
+            opacity: 0;
+            z-index: 3;
+            animation: jump-cycle 7s ease-in infinite;
+            animation-delay: 2s;
+        }
+        .jumper svg {
+            width: 100%;
+            height: 100%;
+        }
+        @keyframes jump-cycle {
+            0%, 70%, 100% { transform: translateY(0) rotate(0deg); opacity: 0; }
+            75% { opacity: 0.6; transform: translateY(-70px) rotate(-35deg) translateX(-20px); }
+            85% { transform: translateY(-30px) rotate(10deg) translateX(-10px); opacity: 0.4; }
+            90% { transform: translateY(0) rotate(0deg); opacity: 0; }
+        }
+
+        .splash {
+            position: absolute;
+            left: 55%;
+            bottom: 10%;
+            width: 40px;
+            height: 20px;
+            transform: translateX(-50%);
+            z-index: 2;
+        }
+        .splash-ring {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            border: 1px solid rgba(94,234,212,0.2);
+            border-radius: 50%;
+            transform: translateX(-50%) scale(0);
+            opacity: 0;
+        }
+        .splash-ring:nth-child(1) { animation: splash-out 7s ease-out infinite 2s; }
+        .splash-ring:nth-child(2) { animation: splash-out 7s ease-out infinite 2s; animation-delay: 2.15s; }
+        .splash-ring:nth-child(3) { animation: splash-out 7s ease-out infinite 2s; animation-delay: 2.3s; }
+        @keyframes splash-out {
+            0%, 90%, 100% { transform: translateX(-50%) scale(0); opacity: 0; }
+            92% { opacity: 0.5; }
+            100% { transform: translateX(-50%) scale(2.5); opacity: 0; width: 40px; height: 10px; }
+        }
+
+        /* Nénuphar + grenouille + œufs */
+        .lily-cluster {
+            position: absolute;
+            bottom: 6%;
+            left: 18%;
+            z-index: 3;
+            animation: bob 6s ease-in-out infinite;
+        }
+        @keyframes bob {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-3px) rotate(2deg); }
+        }
+        .lily-pad {
+            width: 48px;
+            height: 30px;
+            background: rgba(40, 90, 60, 0.35);
+            border-radius: 50%;
+            position: relative;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+        .lily-notch {
+            position: absolute;
+            top: 50%;
+            right: -2px;
+            width: 10px;
+            height: 10px;
+            background: radial-gradient(circle at 0 0, transparent 6px, rgba(40,90,60,0.35) 6px);
+            transform: rotate(-20deg);
+        }
+        .frog {
+            position: absolute;
+            bottom: 14px;
+            left: 14px;
+            width: 16px;
+            height: 10px;
+        }
+        .frog-body {
+            width: 14px;
+            height: 8px;
+            background: rgba(60, 130, 70, 0.6);
+            border-radius: 6px 6px 8px 8px;
+            position: relative;
+        }
+        .frog-eye {
+            position: absolute;
+            top: -2px;
+            width: 3px;
+            height: 3px;
+            background: rgba(20, 60, 30, 0.7);
+            border-radius: 50%;
+            animation: blink 4s ease-in-out infinite;
+        }
+        .frog-eye.left { left: 2px; }
+        .frog-eye.right { left: 9px; }
+        @keyframes blink {
+            0%, 96%, 100% { transform: scaleY(1); }
+            98% { transform: scaleY(0.1); }
+        }
+
+        .eggs {
+            position: absolute;
+            bottom: 2px;
+            left: -10px;
+            width: 20px;
+            height: 8px;
+        }
+        .egg-cluster {
+            position: absolute;
+            width: 3px;
+            height: 2.5px;
+            background: rgba(180, 230, 190, 0.25);
+            border-radius: 50%;
+            animation: egg-float 5s ease-in-out infinite;
+        }
+        @keyframes egg-float {
+            0%, 100% { transform: translateY(0); opacity: 0.3; }
+            50% { transform: translateY(-1px); opacity: 0.6; }
+        }
+
+        /* Grenouille de berge */
+        .bank-frog {
+            position: absolute;
+            bottom: 16%;
+            left: 6%;
+            z-index: 3;
+            animation: bank-breathe 5s ease-in-out infinite;
+        }
+        @keyframes bank-breathe {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-2px); }
+        }
+        .bank-frog svg {
+            width: 28px;
+            height: 20px;
+            opacity: 0.55;
         }
 
         /* Perch & Martin-pêcheur */
@@ -225,6 +409,19 @@
             0% { transform: translateY(10vh) translateX(0); opacity: 0; }
             30% { opacity: 0.4; }
             100% { transform: translateY(-110vh) translateX(20px); opacity: 0; }
+        }
+
+        /* Rêverbe ambient */
+        .glow {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(94,234,212,0.03) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
         }
 
         /* --- INTERFACE --- */
@@ -414,19 +611,6 @@
             margin-bottom: 18px;
             font-weight: 300;
         }
-
-        /* Rêverbe */
-        .glow {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 600px;
-            height: 600px;
-            background: radial-gradient(circle, rgba(94,234,212,0.03) 0%, transparent 70%);
-            pointer-events: none;
-            z-index: 0;
-        }
     </style>
 </head>
 <body>
@@ -434,16 +618,62 @@
     <div class="scene">
         <div class="glow"></div>
         <div class="stars" id="stars"></div>
+        
+        <div class="moon-glow"></div>
         <div class="moon"></div>
         <div class="moon-reflection"></div>
+        
         <div class="horizon"></div>
+        
         <div class="water">
             <div class="water-ripple" style="animation-delay: 0s;"></div>
             <div class="water-ripple" style="animation-delay: 3s; bottom: 18%; left: 30%;"></div>
         </div>
+
+        <div class="water-scales" id="scales"></div>
+        
         <div class="mist"></div>
         <div id="fishLayer"></div>
         <div id="particleLayer"></div>
+
+        <!-- Poisson sauteur -->
+        <div class="jumper">
+            <svg viewBox="0 0 28 12" width="100%" height="100%">
+                <path d="M2,6 C10,2 20,2 24,6 C20,10 10,10 2,6 Z" fill="rgba(94,234,212,0.35)"/>
+                <path d="M24,6 L28,3 L27,9 Z" fill="rgba(94,234,212,0.25)"/>
+            </svg>
+        </div>
+        <div class="splash">
+            <div class="splash-ring" style="width: 10px; height: 4px;"></div>
+            <div class="splash-ring" style="width: 20px; height: 8px;"></div>
+            <div class="splash-ring" style="width: 30px; height: 12px;"></div>
+        </div>
+
+        <!-- Nénuphar avec grenouille et œufs -->
+        <div class="lily-cluster">
+            <div class="lily-pad">
+                <div class="lily-notch"></div>
+                <div class="frog">
+                    <div class="frog-body">
+                        <div class="frog-eye left"></div>
+                        <div class="frog-eye right"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="eggs" id="eggs"></div>
+        </div>
+
+        <!-- Grenouille de berge -->
+        <div class="bank-frog">
+            <svg viewBox="0 0 28 20" width="100%" height="100%">
+                <ellipse cx="20" cy="14" rx="8" ry="5" fill="rgba(50,120,60,0.5)"/>
+                <circle cx="14" cy="10" r="6" fill="rgba(50,120,60,0.55)"/>
+                <circle cx="12" cy="8" r="1.5" fill="#0f172a"/>
+                <circle cx="18" cy="8" r="1.5" fill="#0f172a"/>
+                <ellipse cx="10" cy="16" rx="3" ry="2" fill="rgba(40,100,50,0.45)"/>
+                <ellipse cx="24" cy="16" rx="3" ry="2" fill="rgba(40,100,50,0.45)"/>
+            </svg>
+        </div>
     </div>
 
     <div class="perch-line"></div>
@@ -544,7 +774,6 @@
         let targetRedirectUrl = '';
 
         function initScene() {
-            // Étoiles
             const stars = document.getElementById('stars');
             for (let i = 0; i < 20; i++) {
                 const s = document.createElement('div');
@@ -556,7 +785,6 @@
                 stars.appendChild(s);
             }
 
-            // 2 poissons lents
             const fishLayer = document.getElementById('fishLayer');
             for (let i = 0; i < 2; i++) {
                 const f = document.createElement('div');
@@ -568,7 +796,6 @@
                 fishLayer.appendChild(f);
             }
 
-            // Particules d'ambiance
             const pLayer = document.getElementById('particleLayer');
             for (let i = 0; i < 8; i++) {
                 const p = document.createElement('div');
@@ -577,6 +804,29 @@
                 p.style.animationDuration = (12 + Math.random() * 8) + 's';
                 p.style.animationDelay = Math.random() * 6 + 's';
                 pLayer.appendChild(p);
+            }
+
+            // Écailles d'eau scintillantes
+            const scales = document.getElementById('scales');
+            for (let i = 0; i < 30; i++) {
+                const sc = document.createElement('div');
+                sc.className = 'scale';
+                sc.style.left = (5 + Math.random() * 90) + 'vw';
+                sc.style.bottom = (2 + Math.random() * 18) + '%';
+                sc.style.animationDelay = Math.random() * 3 + 's';
+                sc.style.animationDuration = (2 + Math.random() * 3) + 's';
+                scales.appendChild(sc);
+            }
+
+            // Œufs de grenouille (amas gélatineux)
+            const eggs = document.getElementById('eggs');
+            for (let i = 0; i < 12; i++) {
+                const e = document.createElement('div');
+                e.className = 'egg-cluster';
+                e.style.left = (Math.random() * 14) + 'px';
+                e.style.top = (Math.random() * 6) + 'px';
+                e.style.animationDelay = (Math.random() * 2) + 's';
+                eggs.appendChild(e);
             }
         }
 
