@@ -19,7 +19,7 @@ Accéder au portail :  https://timeobonnin-prog.github.io
 
 
 
-VoLe projet est ouvert à tous. Vous pouvez contribuer au dépôt GitHub en proposant des améliorations, des corrections ou de nouvelles idées. Pour cela, il suffit de créer une pull request dans le dépôt :[ici](https://github.com/timeobonnin-prog/timeobonnin-prog.github.io/pulls)
+VoLe projet est ouvert à tous. Vous pouvez contribuer au dépôt GitHub en proposant des améliorations, des corrections ou de nouvelles idées. Pour cela, il suffit de créer une pull request dans le dépôt :  [ici](https://github.com/timeobonnin-prog/timeobonnin-prog.github.io/pulls)
 
 
 
